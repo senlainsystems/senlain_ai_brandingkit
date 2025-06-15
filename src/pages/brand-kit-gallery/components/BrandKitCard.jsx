@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Icon from 'components/AppIcon';
-import Image from 'components/AppImage';
+import LazyImage from 'components/ui/LazyImage';
+import Tooltip from 'components/ui/Tooltip';
 
 const BrandKitCard = ({ 
   brandKit, 
@@ -26,12 +27,14 @@ const BrandKitCard = ({
       case 'edit':
         onEdit(brandKit.id);
         break;
-      case 'duplicate': console.log('Duplicating brand kit');
+      case 'duplicate': 
+        console.log('Duplicating brand kit');
         break;
       case 'export':
         console.log('Exporting brand kit');
         break;
-      case 'archive': console.log('Archiving brand kit');
+      case 'archive': 
+        console.log('Archiving brand kit');
         break;
       default:
         break;
@@ -48,7 +51,7 @@ const BrandKitCard = ({
 
   return (
     <div
-      className={`bg-surface border rounded-lg overflow-hidden cursor-pointer transition-all duration-200 hover:shadow-elevation-2 ${
+      className={`bg-surface border rounded-lg overflow-hidden cursor-pointer transition-all duration-200 hover:shadow-elevation-2 transform hover:-translate-y-1 ${
         isSelected ? 'border-primary ring-2 ring-primary-200' : 'border-border hover:border-primary-200'
       }`}
       onMouseEnter={() => setIsHovered(true)}
@@ -60,10 +63,15 @@ const BrandKitCard = ({
     >
       {/* Thumbnail */}
       <div className="relative h-48 overflow-hidden">
-        <Image
+        <LazyImage
           src={brandKit.thumbnail}
           alt={brandKit.name}
           className="w-full h-full object-cover transition-transform duration-200 hover:scale-105"
+          placeholder={
+            <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+              <Icon name="Image" size={32} className="text-gray-400" />
+            </div>
+          }
         />
         
         {/* Selection Checkbox */}
@@ -81,15 +89,17 @@ const BrandKitCard = ({
         {(isHovered || showActions) && (
           <div className="absolute top-3 right-3">
             <div className="relative">
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowActions(!showActions);
-                }}
-                className="w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-text-secondary hover:text-text-primary transition-colors duration-200"
-              >
-                <Icon name="MoreVertical" size={16} />
-              </button>
+              <Tooltip content="More actions">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowActions(!showActions);
+                  }}
+                  className="w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-text-secondary hover:text-text-primary transition-colors duration-200"
+                >
+                  <Icon name="MoreVertical" size={16} />
+                </button>
+              </Tooltip>
 
               {showActions && (
                 <div className="absolute top-full right-0 mt-1 w-40 bg-surface border border-border rounded-lg shadow-elevation-3 z-10">
@@ -142,12 +152,14 @@ const BrandKitCard = ({
 
         {/* Tier Badge */}
         <div className="absolute bottom-3 right-3">
-          <span className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded-full border ${getTierColor(brandKit.tier)}`}>
-            {brandKit.tier === 'agency' && <Icon name="Crown" size={12} className="mr-1" />}
-            {brandKit.tier === 'pro' && <Icon name="Star" size={12} className="mr-1" />}
-            {brandKit.tier === 'hobby' && <Icon name="Heart" size={12} className="mr-1" />}
-            <span className="capitalize">{brandKit.tier}</span>
-          </span>
+          <Tooltip content={`${brandKit.tier.charAt(0).toUpperCase() + brandKit.tier.slice(1)} tier`}>
+            <span className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded-full border ${getTierColor(brandKit.tier)}`}>
+              {brandKit.tier === 'agency' && <Icon name="Crown" size={12} className="mr-1" />}
+              {brandKit.tier === 'pro' && <Icon name="Star" size={12} className="mr-1" />}
+              {brandKit.tier === 'hobby' && <Icon name="Heart" size={12} className="mr-1" />}
+              <span className="capitalize">{brandKit.tier}</span>
+            </span>
+          </Tooltip>
         </div>
       </div>
 
@@ -168,12 +180,12 @@ const BrandKitCard = ({
           </div>
           <div className="flex space-x-1">
             {brandKit.colors.slice(0, 5).map((color, index) => (
-              <div
-                key={index}
-                className="w-6 h-6 rounded-full border border-border flex-shrink-0"
-                style={{ backgroundColor: color }}
-                title={color}
-              ></div>
+              <Tooltip key={index} content={color}>
+                <div
+                  className="w-6 h-6 rounded-full border border-border flex-shrink-0 cursor-help"
+                  style={{ backgroundColor: color }}
+                ></div>
+              </Tooltip>
             ))}
             {brandKit.colors.length > 5 && (
               <div className="w-6 h-6 rounded-full border border-border bg-gray-100 flex items-center justify-center">
@@ -187,18 +199,24 @@ const BrandKitCard = ({
         <div className="mb-3">
           <div className="flex items-center justify-between text-xs text-text-muted">
             <div className="flex items-center space-x-3">
-              <div className="flex items-center space-x-1">
-                <Icon name="Image" size={12} />
-                <span>{brandKit.assets.logos}</span>
-              </div>
-              <div className="flex items-center space-x-1">
-                <Icon name="Palette" size={12} />
-                <span>{brandKit.assets.colors}</span>
-              </div>
-              <div className="flex items-center space-x-1">
-                <Icon name="Type" size={12} />
-                <span>{brandKit.assets.fonts}</span>
-              </div>
+              <Tooltip content="Logo variations">
+                <div className="flex items-center space-x-1">
+                  <Icon name="Image" size={12} />
+                  <span>{brandKit.assets.logos}</span>
+                </div>
+              </Tooltip>
+              <Tooltip content="Color palette">
+                <div className="flex items-center space-x-1">
+                  <Icon name="Palette" size={12} />
+                  <span>{brandKit.assets.colors}</span>
+                </div>
+              </Tooltip>
+              <Tooltip content="Typography options">
+                <div className="flex items-center space-x-1">
+                  <Icon name="Type" size={12} />
+                  <span>{brandKit.assets.fonts}</span>
+                </div>
+              </Tooltip>
             </div>
           </div>
         </div>

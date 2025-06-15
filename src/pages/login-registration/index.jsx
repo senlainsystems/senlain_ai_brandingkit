@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Icon from 'components/AppIcon';
-import Image from 'components/AppImage';
+import LazyImage from 'components/ui/LazyImage';
+import { useToast } from 'components/ui/ToastProvider';
 import LoginForm from './components/LoginForm';
 import RegisterForm from './components/RegisterForm';
 import TwoFactorModal from './components/TwoFactorModal';
 
 const LoginRegistration = () => {
   const navigate = useNavigate();
+  const toast = useToast();
   const [activeTab, setActiveTab] = useState('login');
   const [showTwoFactor, setShowTwoFactor] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [authError, setAuthError] = useState('');
 
   const brandExamples = [
     {
@@ -39,7 +40,6 @@ const LoginRegistration = () => {
 
   const handleLogin = async (formData) => {
     setIsLoading(true);
-    setAuthError('');
     
     try {
       // Simulate API call
@@ -49,12 +49,13 @@ const LoginRegistration = () => {
         if (formData.rememberMe) {
           localStorage.setItem('brandkit_remember', 'true');
         }
+        toast.success('Login successful! Please verify your identity.');
         setShowTwoFactor(true);
       } else {
-        setAuthError('Invalid email or password');
+        toast.error('Invalid email or password');
       }
     } catch (error) {
-      setAuthError('Login failed. Please try again.');
+      toast.error('Login failed. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -62,21 +63,21 @@ const LoginRegistration = () => {
 
   const handleRegister = async (formData) => {
     setIsLoading(true);
-    setAuthError('');
     
     try {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1500));
       
       if (formData.password !== formData.confirmPassword) {
-        setAuthError('Passwords do not match');
+        toast.error('Passwords do not match');
         return;
       }
       
       // Simulate successful registration
+      toast.success('Account created successfully! Please verify your email.');
       setShowTwoFactor(true);
     } catch (error) {
-      setAuthError('Registration failed. Please try again.');
+      toast.error('Registration failed. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -90,13 +91,14 @@ const LoginRegistration = () => {
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       if (code === '123456') {
+        toast.success('Welcome to BrandKit AI!');
         navigate('/brand-brief-creation');
       } else {
-        setAuthError('Invalid verification code');
+        toast.error('Invalid verification code');
         setShowTwoFactor(false);
       }
     } catch (error) {
-      setAuthError('Verification failed. Please try again.');
+      toast.error('Verification failed. Please try again.');
       setShowTwoFactor(false);
     } finally {
       setIsLoading(false);
@@ -124,12 +126,17 @@ const LoginRegistration = () => {
             </h3>
             
             {brandExamples.map((brand) => (
-              <div key={brand.id} className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+              <div key={brand.id} className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20 transform transition-all duration-300 hover:scale-105">
                 <div className="flex items-center space-x-4 mb-4">
-                  <Image
+                  <LazyImage
                     src={brand.logo}
                     alt={brand.name}
                     className="w-12 h-12 rounded-lg object-cover"
+                    placeholder={
+                      <div className="w-12 h-12 rounded-lg bg-white/20 flex items-center justify-center">
+                        <Icon name="Image" size={20} className="text-white/60" />
+                      </div>
+                    }
                   />
                   <div>
                     <h4 className="text-lg font-semibold text-white">{brand.name}</h4>
@@ -183,14 +190,6 @@ const LoginRegistration = () => {
               Sign Up
             </button>
           </div>
-
-          {/* Error Message */}
-          {authError && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center space-x-2">
-              <Icon name="AlertCircle" size={20} color="#DC2626" />
-              <span className="text-red-700 text-sm">{authError}</span>
-            </div>
-          )}
 
           {/* Auth Forms */}
           {activeTab === 'login' ? (

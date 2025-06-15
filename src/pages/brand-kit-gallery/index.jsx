@@ -1,9 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from 'components/ui/Header';
 import BreadcrumbNavigation from 'components/ui/BreadcrumbNavigation';
 import QuickActionsMenu from 'components/ui/QuickActionsMenu';
 import Icon from 'components/AppIcon';
+import SearchInput from 'components/ui/SearchInput';
+import InfiniteScroll from 'components/ui/InfiniteScroll';
+import { SkeletonCard } from 'components/ui/Skeleton';
+import { useToast } from 'components/ui/ToastProvider';
+import { useLocalStorage } from 'hooks/useLocalStorage';
+import { useDebounce } from 'hooks/useDebounce';
 
 import FilterSidebar from './components/FilterSidebar';
 import BrandKitCard from './components/BrandKitCard';
@@ -13,9 +19,10 @@ import EmptyState from './components/EmptyState';
 
 const BrandKitGallery = () => {
   const navigate = useNavigate();
-  const [viewMode, setViewMode] = useState('grid');
+  const toast = useToast();
+  const [viewMode, setViewMode] = useLocalStorage('gallery-view-mode', 'grid');
   const [searchQuery, setSearchQuery] = useState('');
-  const [sortBy, setSortBy] = useState('newest');
+  const [sortBy, setSortBy] = useLocalStorage('gallery-sort-by', 'newest');
   const [selectedItems, setSelectedItems] = useState([]);
   const [filters, setFilters] = useState({
     industry: [],
@@ -25,140 +32,83 @@ const BrandKitGallery = () => {
   });
   const [isLoading, setIsLoading] = useState(true);
   const [showBulkActions, setShowBulkActions] = useState(false);
-
-  // Mock brand kits data
-  const mockBrandKits = [
-    {
-      id: 'brand-001',
-      name: 'TechFlow Solutions',
-      thumbnail: 'https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=400&h=300&fit=crop',
-      industry: 'Technology',
-      status: 'complete',
-      createdAt: new Date('2024-01-15'),
-      lastModified: new Date('2024-01-20'),
-      colors: ['#2563EB', '#F59E0B', '#10B981'],
-      tags: ['modern', 'professional', 'tech'],
-      tier: 'pro',
-      assets: {
-        logos: 5,
-        colors: 8,
-        fonts: 3,
-        guidelines: 1
-      }
-    },
-    {
-      id: 'brand-002',
-      name: 'Green Earth Organics',
-      thumbnail: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=400&h=300&fit=crop',
-      industry: 'Food & Beverage',
-      status: 'complete',
-      createdAt: new Date('2024-01-10'),
-      lastModified: new Date('2024-01-18'),
-      colors: ['#10B981', '#F59E0B', '#8B5CF6'],
-      tags: ['organic', 'natural', 'eco-friendly'],
-      tier: 'hobby',
-      assets: {
-        logos: 3,
-        colors: 5,
-        fonts: 2,
-        guidelines: 1
-      }
-    },
-    {
-      id: 'brand-003',
-      name: 'Urban Fitness Studio',
-      thumbnail: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop',
-      industry: 'Health & Fitness',
-      status: 'draft',
-      createdAt: new Date('2024-01-12'),
-      lastModified: new Date('2024-01-22'),
-      colors: ['#EF4444', '#1F2937', '#F59E0B'],
-      tags: ['fitness', 'energy', 'bold'],
-      tier: 'pro',
-      assets: {
-        logos: 2,
-        colors: 4,
-        fonts: 1,
-        guidelines: 0
-      }
-    },
-    {
-      id: 'brand-004',
-      name: 'Artisan Coffee Co.',
-      thumbnail: 'https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=400&h=300&fit=crop',
-      industry: 'Food & Beverage',
-      status: 'complete',
-      createdAt: new Date('2024-01-08'),
-      lastModified: new Date('2024-01-16'),
-      colors: ['#8B4513', '#F5DEB3', '#2F4F4F'],
-      tags: ['artisan', 'premium', 'coffee'],
-      tier: 'agency',
-      assets: {
-        logos: 8,
-        colors: 12,
-        fonts: 5,
-        guidelines: 2
-      }
-    },
-    {
-      id: 'brand-005',
-      name: 'Digital Marketing Hub',
-      thumbnail: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=300&fit=crop',
-      industry: 'Marketing',
-      status: 'archived',
-      createdAt: new Date('2023-12-20'),
-      lastModified: new Date('2024-01-05'),
-      colors: ['#7C3AED', '#EC4899', '#F59E0B'],
-      tags: ['digital', 'creative', 'marketing'],
-      tier: 'pro',
-      assets: {
-        logos: 4,
-        colors: 6,
-        fonts: 2,
-        guidelines: 1
-      }
-    },
-    {
-      id: 'brand-006',
-      name: 'Sustainable Fashion',
-      thumbnail: 'https://images.unsplash.com/photo-1445205170230-053b83016050?w=400&h=300&fit=crop',
-      industry: 'Fashion',
-      status: 'complete',
-      createdAt: new Date('2024-01-05'),
-      lastModified: new Date('2024-01-14'),
-      colors: ['#059669', '#F3F4F6', '#1F2937'],
-      tags: ['sustainable', 'fashion', 'eco'],
-      tier: 'hobby',
-      assets: {
-        logos: 3,
-        colors: 4,
-        fonts: 2,
-        guidelines: 1
-      }
-    }
-  ];
-
   const [brandKits, setBrandKits] = useState([]);
-  const [filteredBrandKits, setFilteredBrandKits] = useState([]);
+  const [hasMore, setHasMore] = useState(true);
+  const [page, setPage] = useState(1);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
 
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
+
+  // Mock brand kits data with more items for infinite scroll
+  const generateMockBrandKits = (startId = 1, count = 20) => {
+    const industries = ['Technology', 'Food & Beverage', 'Health & Fitness', 'Fashion', 'Marketing', 'Finance'];
+    const statuses = ['complete', 'draft', 'archived'];
+    const tiers = ['hobby', 'pro', 'agency'];
+    
+    return Array.from({ length: count }, (_, index) => {
+      const id = startId + index;
+      return {
+        id: `brand-${id.toString().padStart(3, '0')}`,
+        name: `Brand ${id}`,
+        thumbnail: `https://images.unsplash.com/photo-${1600000000000 + id}?w=400&h=300&fit=crop`,
+        industry: industries[Math.floor(Math.random() * industries.length)],
+        status: statuses[Math.floor(Math.random() * statuses.length)],
+        createdAt: new Date(Date.now() - Math.random() * 365 * 24 * 60 * 60 * 1000),
+        lastModified: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000),
+        colors: ['#1E40AF', '#7C3AED', '#F59E0B'].slice(0, Math.floor(Math.random() * 3) + 1),
+        tags: ['modern', 'professional', 'creative'].slice(0, Math.floor(Math.random() * 3) + 1),
+        tier: tiers[Math.floor(Math.random() * tiers.length)],
+        assets: {
+          logos: Math.floor(Math.random() * 8) + 1,
+          colors: Math.floor(Math.random() * 10) + 3,
+          fonts: Math.floor(Math.random() * 5) + 1,
+          guidelines: Math.floor(Math.random() * 2) + 1
+        }
+      };
+    });
+  };
+
+  // Simulate API loading
   useEffect(() => {
-    // Simulate loading
-    setTimeout(() => {
-      setBrandKits(mockBrandKits);
-      setFilteredBrandKits(mockBrandKits);
+    const loadInitialData = async () => {
+      setIsLoading(true);
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      setBrandKits(generateMockBrandKits(1, 20));
       setIsLoading(false);
-    }, 1000);
+    };
+
+    loadInitialData();
   }, []);
 
-  useEffect(() => {
+  // Load more data for infinite scroll
+  const loadMore = async () => {
+    if (isLoadingMore || !hasMore) return;
+    
+    setIsLoadingMore(true);
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    const newItems = generateMockBrandKits((page * 20) + 1, 20);
+    setBrandKits(prev => [...prev, ...newItems]);
+    setPage(prev => prev + 1);
+    
+    // Simulate end of data after 100 items
+    if (page >= 4) {
+      setHasMore(false);
+    }
+    
+    setIsLoadingMore(false);
+  };
+
+  // Filter and sort brand kits
+  const filteredBrandKits = useMemo(() => {
     let filtered = [...brandKits];
 
     // Apply search filter
-    if (searchQuery) {
+    if (debouncedSearchQuery) {
       filtered = filtered.filter(kit =>
-        kit.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        kit.industry.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        kit.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))
+        kit.name.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) ||
+        kit.industry.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) ||
+        kit.tags.some(tag => tag.toLowerCase().includes(debouncedSearchQuery.toLowerCase()))
       );
     }
 
@@ -215,8 +165,8 @@ const BrandKitGallery = () => {
       }
     });
 
-    setFilteredBrandKits(filtered);
-  }, [brandKits, searchQuery, filters, sortBy]);
+    return filtered;
+  }, [brandKits, debouncedSearchQuery, filters, sortBy]);
 
   const handleSelectItem = (id) => {
     setSelectedItems(prev => {
@@ -241,8 +191,14 @@ const BrandKitGallery = () => {
   };
 
   const handleBulkAction = (action) => {
-    console.log(`Performing ${action} on:`, selectedItems);
-    // Implement bulk actions here
+    const actionMessages = {
+      export: `Exported ${selectedItems.length} brand kits`,
+      duplicate: `Duplicated ${selectedItems.length} brand kits`,
+      archive: `Archived ${selectedItems.length} brand kits`,
+      delete: `Deleted ${selectedItems.length} brand kits`
+    };
+
+    toast.success(actionMessages[action] || `Performed ${action} on ${selectedItems.length} items`);
     setSelectedItems([]);
     setShowBulkActions(false);
   };
@@ -280,6 +236,19 @@ const BrandKitGallery = () => {
         return 'text-text-secondary bg-gray-50 border-gray-200';
     }
   };
+
+  // Search suggestions
+  const searchSuggestions = useMemo(() => {
+    const suggestions = new Set();
+    brandKits.forEach(kit => {
+      suggestions.add(kit.name);
+      suggestions.add(kit.industry);
+      kit.tags.forEach(tag => suggestions.add(tag));
+    });
+    return Array.from(suggestions).filter(suggestion => 
+      suggestion.toLowerCase().includes(searchQuery.toLowerCase())
+    ).slice(0, 5);
+  }, [brandKits, searchQuery]);
 
   if (isLoading) {
     return (
@@ -319,17 +288,7 @@ const BrandKitGallery = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                   {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
-                    <div key={i} className="bg-surface border border-border rounded-lg overflow-hidden">
-                      <div className="h-48 bg-gray-200 animate-pulse"></div>
-                      <div className="p-4 space-y-3">
-                        <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
-                        <div className="h-3 bg-gray-100 rounded w-2/3 animate-pulse"></div>
-                        <div className="flex space-x-2">
-                          <div className="h-6 bg-gray-100 rounded w-16 animate-pulse"></div>
-                          <div className="h-6 bg-gray-100 rounded w-20 animate-pulse"></div>
-                        </div>
-                      </div>
-                    </div>
+                    <SkeletonCard key={i} />
                   ))}
                 </div>
               </div>
@@ -369,28 +328,14 @@ const BrandKitGallery = () => {
             {/* Search and Controls */}
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center space-x-4 flex-1">
-                <div className="relative flex-1 max-w-md">
-                  <Icon 
-                    name="Search" 
-                    size={18} 
-                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-text-muted" 
-                  />
-                  <input
-                    type="text"
-                    placeholder="Search brand kits..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="input-field pl-10 pr-4 py-2 w-full"
-                  />
-                  {searchQuery && (
-                    <button
-                      onClick={() => setSearchQuery('')}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-text-muted hover:text-text-primary"
-                    >
-                      <Icon name="X" size={16} />
-                    </button>
-                  )}
-                </div>
+                <SearchInput
+                  placeholder="Search brand kits..."
+                  onSearch={setSearchQuery}
+                  onClear={() => setSearchQuery('')}
+                  suggestions={searchSuggestions}
+                  showSuggestions={true}
+                  className="flex-1 max-w-md"
+                />
               </div>
 
               <div className="flex items-center space-x-3">
@@ -444,7 +389,7 @@ const BrandKitGallery = () => {
             <div className="flex-1">
               {filteredBrandKits.length === 0 ? (
                 <EmptyState
-                  searchQuery={searchQuery}
+                  searchQuery={debouncedSearchQuery}
                   hasFilters={Object.values(filters).some(f => Array.isArray(f) ? f.length > 0 : f !== 'all')}
                   onCreateNew={handleCreateNew}
                   onClearFilters={() => {
@@ -471,31 +416,37 @@ const BrandKitGallery = () => {
                     </p>
                   </div>
 
-                  {/* Brand Kits Display */}
-                  {viewMode === 'grid' ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                      {filteredBrandKits.map((kit) => (
-                        <BrandKitCard
-                          key={kit.id}
-                          brandKit={kit}
-                          isSelected={selectedItems.includes(kit.id)}
-                          onSelect={handleSelectItem}
-                          onEdit={handleEditBrand}
-                          getStatusColor={getStatusColor}
-                          getTierColor={getTierColor}
-                        />
-                      ))}
-                    </div>
-                  ) : (
-                    <BrandKitListView
-                      brandKits={filteredBrandKits}
-                      selectedItems={selectedItems}
-                      onSelect={handleSelectItem}
-                      onEdit={handleEditBrand}
-                      getStatusColor={getStatusColor}
-                      getTierColor={getTierColor}
-                    />
-                  )}
+                  {/* Brand Kits Display with Infinite Scroll */}
+                  <InfiniteScroll
+                    hasMore={hasMore && !debouncedSearchQuery && Object.values(filters).every(f => Array.isArray(f) ? f.length === 0 : f === 'all')}
+                    isLoading={isLoadingMore}
+                    onLoadMore={loadMore}
+                  >
+                    {viewMode === 'grid' ? (
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        {filteredBrandKits.map((kit) => (
+                          <BrandKitCard
+                            key={kit.id}
+                            brandKit={kit}
+                            isSelected={selectedItems.includes(kit.id)}
+                            onSelect={handleSelectItem}
+                            onEdit={handleEditBrand}
+                            getStatusColor={getStatusColor}
+                            getTierColor={getTierColor}
+                          />
+                        ))}
+                      </div>
+                    ) : (
+                      <BrandKitListView
+                        brandKits={filteredBrandKits}
+                        selectedItems={selectedItems}
+                        onSelect={handleSelectItem}
+                        onEdit={handleEditBrand}
+                        getStatusColor={getStatusColor}
+                        getTierColor={getTierColor}
+                      />
+                    )}
+                  </InfiniteScroll>
                 </>
               )}
             </div>
