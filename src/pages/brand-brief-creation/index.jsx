@@ -4,6 +4,7 @@ import Header from 'components/ui/Header';
 import BreadcrumbNavigation from 'components/ui/BreadcrumbNavigation';
 import QuickActionsMenu from 'components/ui/QuickActionsMenu';
 import Icon from 'components/AppIcon';
+import { useBrandContext } from 'context/BrandContext';
 
 import BasicInformationStep from './components/BasicInformationStep';
 import VisualPreferencesStep from './components/VisualPreferencesStep';
@@ -12,41 +13,13 @@ import ReviewSummaryStep from './components/ReviewSummaryStep';
 
 const BrandBriefCreation = () => {
   const navigate = useNavigate();
+  const { brandBrief, updateBrandBrief } = useBrandContext();
   const [currentStep, setCurrentStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [lastSaved, setLastSaved] = useState(null);
-  const [formData, setFormData] = useState({
-    basicInfo: {
-      businessName: '',
-      industry: '',
-      businessDescription: '',
-      isNameAvailable: null
-    },
-    visualPreferences: {
-      colorPalette: [],
-      moodBoard: [],
-      stylePreferences: {
-        modernClassic: 'modern',
-        boldSubtle: 'bold',
-        playfulProfessional: 'professional'
-      }
-    },
-    targetAudience: {
-      demographics: {
-        ageRange: '25-34',
-        gender: 'all',
-        location: 'global',
-        income: 'middle'
-      },
-      brandPersonality: {
-        innovative: 7,
-        trustworthy: 8,
-        friendly: 6,
-        professional: 9,
-        creative: 7
-      }
-    }
-  });
+
+  // Use brandBrief from context instead of local formData
+  const formData = brandBrief;
 
   const steps = [
     { id: 1, title: 'Basic Information', description: 'Business details and industry' },
@@ -66,11 +39,8 @@ const BrandBriefCreation = () => {
     return () => clearTimeout(autoSave);
   }, [formData]);
 
-  const updateFormData = (section, data) => {
-    setFormData(prev => ({
-      ...prev,
-      [section]: { ...prev[section], ...data }
-    }));
+  const updateLocalFormData = (section, data) => {
+    updateBrandBrief(section, data);
   };
 
   const handleNext = () => {
@@ -118,21 +88,21 @@ const BrandBriefCreation = () => {
         return (
           <BasicInformationStep
             data={formData.basicInfo}
-            onUpdate={(data) => updateFormData('basicInfo', data)}
+            onUpdate={(data) => updateLocalFormData('basicInfo', data)}
           />
         );
       case 2:
         return (
           <VisualPreferencesStep
             data={formData.visualPreferences}
-            onUpdate={(data) => updateFormData('visualPreferences', data)}
+            onUpdate={(data) => updateLocalFormData('visualPreferences', data)}
           />
         );
       case 3:
         return (
           <TargetAudienceStep
             data={formData.targetAudience}
-            onUpdate={(data) => updateFormData('targetAudience', data)}
+            onUpdate={(data) => updateLocalFormData('targetAudience', data)}
           />
         );
       case 4:
@@ -150,11 +120,11 @@ const BrandBriefCreation = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      
+
       <div className="pt-20">
         <div className="max-w-7xl mx-auto px-6 py-8">
           <BreadcrumbNavigation />
-          
+
           {/* Page Header */}
           <div className="mb-8">
             <div className="flex items-center justify-between mb-4">
@@ -164,7 +134,7 @@ const BrandBriefCreation = () => {
                   Tell us about your business to generate the perfect brand identity
                 </p>
               </div>
-              
+
               {lastSaved && (
                 <div className="flex items-center space-x-2 text-sm text-success">
                   <Icon name="Check" size={16} />
@@ -183,25 +153,24 @@ const BrandBriefCreation = () => {
                   {Math.round((currentStep / steps.length) * 100)}% Complete
                 </span>
               </div>
-              
+
               <div className="w-full bg-border rounded-full h-2 mb-4">
-                <div 
+                <div
                   className="bg-primary h-2 rounded-full transition-all duration-300"
                   style={{ width: `${(currentStep / steps.length) * 100}%` }}
                 ></div>
               </div>
-              
+
               <div className="grid grid-cols-4 gap-4">
                 {steps.map((step) => (
                   <button
                     key={step.id}
                     onClick={() => handleStepClick(step.id)}
-                    className={`text-left p-3 rounded-lg border transition-all duration-200 ${
-                      currentStep === step.id
+                    className={`text-left p-3 rounded-lg border transition-all duration-200 ${currentStep === step.id
                         ? 'border-primary bg-primary-50 text-primary'
                         : isStepComplete(step.id)
-                        ? 'border-success bg-success-50 text-success hover:bg-success-100' :'border-border bg-background text-text-secondary hover:bg-surface'
-                    }`}
+                          ? 'border-success bg-success-50 text-success hover:bg-success-100' : 'border-border bg-background text-text-secondary hover:bg-surface'
+                      }`}
                   >
                     <div className="flex items-center space-x-2 mb-1">
                       {isStepComplete(step.id) && currentStep !== step.id ? (
@@ -225,7 +194,7 @@ const BrandBriefCreation = () => {
             <div className="col-span-12 lg:col-span-4">
               <div className="bg-surface border border-border rounded-lg p-6 sticky top-24">
                 <h3 className="text-lg font-semibold text-text-primary mb-4">Brief Summary</h3>
-                
+
                 <div className="space-y-4">
                   {/* Basic Info Summary */}
                   <div className="pb-4 border-b border-border">
@@ -314,10 +283,9 @@ const BrandBriefCreation = () => {
               <button
                 onClick={handlePrevious}
                 disabled={currentStep === 1}
-                className={`flex items-center space-x-2 px-6 py-3 rounded-lg font-medium transition-all duration-200 ${
-                  currentStep === 1
-                    ? 'bg-background text-text-muted cursor-not-allowed' :'bg-background text-text-secondary hover:bg-border border border-border'
-                }`}
+                className={`flex items-center space-x-2 px-6 py-3 rounded-lg font-medium transition-all duration-200 ${currentStep === 1
+                    ? 'bg-background text-text-muted cursor-not-allowed' : 'bg-background text-text-secondary hover:bg-border border border-border'
+                  }`}
               >
                 <Icon name="ChevronLeft" size={18} />
                 <span>Previous</span>
@@ -327,15 +295,14 @@ const BrandBriefCreation = () => {
                 <span className="text-sm text-text-secondary">
                   Step {currentStep} of {steps.length}
                 </span>
-                
+
                 {currentStep === 4 ? (
                   <button
                     onClick={handleGenerate}
                     disabled={!isStepComplete(4) || isLoading}
-                    className={`flex items-center space-x-2 px-8 py-3 rounded-lg font-medium transition-all duration-200 ${
-                      isStepComplete(4) && !isLoading
-                        ? 'btn-primary' :'bg-text-muted text-white cursor-not-allowed'
-                    }`}
+                    className={`flex items-center space-x-2 px-8 py-3 rounded-lg font-medium transition-all duration-200 ${isStepComplete(4) && !isLoading
+                        ? 'btn-primary' : 'bg-text-muted text-white cursor-not-allowed'
+                      }`}
                   >
                     {isLoading ? (
                       <>

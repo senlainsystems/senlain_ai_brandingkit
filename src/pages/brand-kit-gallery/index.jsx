@@ -44,7 +44,7 @@ const BrandKitGallery = () => {
     const industries = ['Technology', 'Food & Beverage', 'Health & Fitness', 'Fashion', 'Marketing', 'Finance'];
     const statuses = ['complete', 'draft', 'archived'];
     const tiers = ['hobby', 'pro', 'agency'];
-    
+
     return Array.from({ length: count }, (_, index) => {
       const id = startId + index;
       return {
@@ -83,19 +83,19 @@ const BrandKitGallery = () => {
   // Load more data for infinite scroll
   const loadMore = async () => {
     if (isLoadingMore || !hasMore) return;
-    
+
     setIsLoadingMore(true);
     await new Promise(resolve => setTimeout(resolve, 1000));
-    
+
     const newItems = generateMockBrandKits((page * 20) + 1, 20);
     setBrandKits(prev => [...prev, ...newItems]);
     setPage(prev => prev + 1);
-    
+
     // Simulate end of data after 100 items
     if (page >= 4) {
       setHasMore(false);
     }
-    
+
     setIsLoadingMore(false);
   };
 
@@ -129,7 +129,7 @@ const BrandKitGallery = () => {
     if (filters.dateRange !== 'all') {
       const now = new Date();
       const filterDate = new Date();
-      
+
       switch (filters.dateRange) {
         case 'week':
           filterDate.setDate(now.getDate() - 7);
@@ -143,7 +143,7 @@ const BrandKitGallery = () => {
         default:
           break;
       }
-      
+
       if (filters.dateRange !== 'all') {
         filtered = filtered.filter(kit => kit.createdAt >= filterDate);
       }
@@ -173,7 +173,7 @@ const BrandKitGallery = () => {
       const newSelection = prev.includes(id)
         ? prev.filter(item => item !== id)
         : [...prev, id];
-      
+
       setShowBulkActions(newSelection.length > 0);
       return newSelection;
     });
@@ -245,7 +245,7 @@ const BrandKitGallery = () => {
       suggestions.add(kit.industry);
       kit.tags.forEach(tag => suggestions.add(tag));
     });
-    return Array.from(suggestions).filter(suggestion => 
+    return Array.from(suggestions).filter(suggestion =>
       suggestion.toLowerCase().includes(searchQuery.toLowerCase())
     ).slice(0, 5);
   }, [brandKits, searchQuery]);
@@ -302,27 +302,37 @@ const BrandKitGallery = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      
+
       <div className="pt-20 px-6">
         <div className="max-w-7xl mx-auto">
           <BreadcrumbNavigation />
-          
+
           <div className="mb-8">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h1 className="text-3xl font-bold text-text-primary">Brand Kit Gallery</h1>
-                <p className="text-text-secondary mt-1">
-                  Manage and organize your brand identity collections
-                </p>
+            <div className="mb-10">
+              <div className="bg-gradient-to-r from-primary-900 via-primary-800 to-secondary-900 rounded-2xl p-8 md:p-12 shadow-elevation-4 overflow-hidden relative">
+                {/* Background Decoration */}
+                <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -mr-32 -mt-32"></div>
+                <div className="absolute bottom-0 left-0 w-64 h-64 bg-secondary-500/20 rounded-full blur-3xl -ml-20 -mb-20"></div>
+
+                <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+                  <div className="text-white max-w-xl">
+                    <h1 className="text-3xl md:text-4xl font-bold mb-3 tracking-tight">
+                      Manage Your Brand Identity
+                    </h1>
+                    <p className="text-primary-100 text-lg opacity-90">
+                      Organize, edit, and export your AI-generated brand assets in one place.
+                    </p>
+                  </div>
+
+                  <button
+                    onClick={handleCreateNew}
+                    className="bg-white text-primary-700 hover:bg-gray-50 px-6 py-3.5 rounded-xl font-semibold inline-flex items-center space-x-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
+                  >
+                    <Icon name="Plus" size={20} />
+                    <span>Create New Brand</span>
+                  </button>
+                </div>
               </div>
-              
-              <button
-                onClick={handleCreateNew}
-                className="btn-primary px-6 py-3 rounded-lg font-medium inline-flex items-center space-x-2"
-              >
-                <Icon name="Plus" size={18} />
-                <span>Create New Brand</span>
-              </button>
             </div>
 
             {/* Search and Controls */}

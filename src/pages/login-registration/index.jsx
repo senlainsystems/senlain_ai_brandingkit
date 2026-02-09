@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Icon from 'components/AppIcon';
 import LazyImage from 'components/ui/LazyImage';
 import { useToast } from 'components/ui/ToastProvider';
+import { useAuth } from 'context/AuthContext';
 import LoginForm from './components/LoginForm';
 import RegisterForm from './components/RegisterForm';
 import TwoFactorModal from './components/TwoFactorModal';
@@ -10,6 +11,7 @@ import TwoFactorModal from './components/TwoFactorModal';
 const LoginRegistration = () => {
   const navigate = useNavigate();
   const toast = useToast();
+  const { login, signup } = useAuth();
   const [activeTab, setActiveTab] = useState('login');
   const [showTwoFactor, setShowTwoFactor] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -40,22 +42,18 @@ const LoginRegistration = () => {
 
   const handleLogin = async (formData) => {
     setIsLoading(true);
-    
+
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      if (formData.email === 'demo@example.com' && formData.password === 'demo123') {
-        if (formData.rememberMe) {
-          localStorage.setItem('brandkit_remember', 'true');
-        }
-        toast.success('Login successful! Please verify your identity.');
-        setShowTwoFactor(true);
-      } else {
-        toast.error('Invalid email or password');
+      await login(formData.email, formData.password);
+
+      if (formData.rememberMe) {
+        localStorage.setItem('brandkit_remember', 'true');
       }
+      toast.success('Login successful!');
+      navigate('/brand-brief-creation');
     } catch (error) {
-      toast.error('Login failed. Please try again.');
+      console.error(error);
+      toast.error('Login failed: ' + error.message);
     } finally {
       setIsLoading(false);
     }
@@ -63,21 +61,20 @@ const LoginRegistration = () => {
 
   const handleRegister = async (formData) => {
     setIsLoading(true);
-    
+
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
       if (formData.password !== formData.confirmPassword) {
         toast.error('Passwords do not match');
         return;
       }
-      
-      // Simulate successful registration
-      toast.success('Account created successfully! Please verify your email.');
-      setShowTwoFactor(true);
+
+      await signup(formData.email, formData.password);
+
+      toast.success('Account created successfully!');
+      navigate('/brand-brief-creation');
     } catch (error) {
-      toast.error('Registration failed. Please try again.');
+      console.error(error);
+      toast.error('Registration failed: ' + error.message);
     } finally {
       setIsLoading(false);
     }
@@ -85,11 +82,11 @@ const LoginRegistration = () => {
 
   const handleTwoFactorVerify = async (code) => {
     setIsLoading(true);
-    
+
     try {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       if (code === '123456') {
         toast.success('Welcome to BrandKit AI!');
         navigate('/brand-brief-creation');
@@ -119,12 +116,12 @@ const LoginRegistration = () => {
               Join thousands of designers and businesses creating professional brand kits with AI
             </p>
           </div>
-          
+
           <div className="space-y-6">
             <h3 className="text-2xl font-semibold text-white mb-4">
               Featured Brand Examples
             </h3>
-            
+
             {brandExamples.map((brand) => (
               <div key={brand.id} className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20 transform transition-all duration-300 hover:scale-105">
                 <div className="flex items-center space-x-4 mb-4">
@@ -143,7 +140,7 @@ const LoginRegistration = () => {
                     <p className="text-white/70 text-sm">{brand.industry}</p>
                   </div>
                 </div>
-                
+
                 <div className="flex space-x-2">
                   {brand.colors.map((color, index) => (
                     <div
@@ -175,17 +172,15 @@ const LoginRegistration = () => {
           <div className="flex bg-surface rounded-lg p-1 mb-8">
             <button
               onClick={() => setActiveTab('login')}
-              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
-                activeTab === 'login' ?'bg-primary text-white' :'text-text-secondary hover:text-text-primary'
-              }`}
+              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${activeTab === 'login' ? 'bg-primary text-white' : 'text-text-secondary hover:text-text-primary'
+                }`}
             >
               Sign In
             </button>
             <button
               onClick={() => setActiveTab('register')}
-              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
-                activeTab === 'register' ?'bg-primary text-white' :'text-text-secondary hover:text-text-primary'
-              }`}
+              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${activeTab === 'register' ? 'bg-primary text-white' : 'text-text-secondary hover:text-text-primary'
+                }`}
             >
               Sign Up
             </button>

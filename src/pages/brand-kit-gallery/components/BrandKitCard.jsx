@@ -3,13 +3,13 @@ import Icon from 'components/AppIcon';
 import LazyImage from 'components/ui/LazyImage';
 import Tooltip from 'components/ui/Tooltip';
 
-const BrandKitCard = ({ 
-  brandKit, 
-  isSelected, 
-  onSelect, 
-  onEdit, 
-  getStatusColor, 
-  getTierColor 
+const BrandKitCard = ({
+  brandKit,
+  isSelected,
+  onSelect,
+  onEdit,
+  getStatusColor,
+  getTierColor
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [showActions, setShowActions] = useState(false);
@@ -22,18 +22,18 @@ const BrandKitCard = ({
   const handleQuickAction = (action, e) => {
     e.stopPropagation();
     console.log(`${action} action for brand:`, brandKit.id);
-    
+
     switch (action) {
       case 'edit':
         onEdit(brandKit.id);
         break;
-      case 'duplicate': 
+      case 'duplicate':
         console.log('Duplicating brand kit');
         break;
       case 'export':
         console.log('Exporting brand kit');
         break;
-      case 'archive': 
+      case 'archive':
         console.log('Archiving brand kit');
         break;
       default:
@@ -51,9 +51,8 @@ const BrandKitCard = ({
 
   return (
     <div
-      className={`bg-surface border rounded-lg overflow-hidden cursor-pointer transition-all duration-200 hover:shadow-elevation-2 transform hover:-translate-y-1 ${
-        isSelected ? 'border-primary ring-2 ring-primary-200' : 'border-border hover:border-primary-200'
-      }`}
+      className={`bg-surface rounded-xl overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-elevation-3 transform hover:-translate-y-1 ${isSelected ? 'ring-2 ring-primary shadow-elevation-2' : 'shadow-elevation-1 hover:shadow-elevation-3'
+        }`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => {
         setIsHovered(false);
@@ -73,7 +72,7 @@ const BrandKitCard = ({
             </div>
           }
         />
-        
+
         {/* Selection Checkbox */}
         <div className="absolute top-3 left-3">
           <input
