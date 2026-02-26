@@ -83,8 +83,8 @@ const Header = () => {
             onClick={handleLogoClick}
           >
             <div className="flex items-center space-x-3">
-              <div className="w-9 h-9 bg-gradient-to-br from-primary-600 to-secondary-500 rounded-xl shadow-lg shadow-primary-500/20 flex items-center justify-center group-hover:scale-105 transition-all duration-300">
-                <Icon name="Zap" size={20} color="white" />
+              <div className="w-9 h-9 bg-white rounded-xl shadow-lg flex items-center justify-center group-hover:scale-105 transition-all duration-300 p-1">
+                <img src="/Senlain_logo-removebg-preview.png" alt="Logo" className="w-full h-full object-contain" />
               </div>
               <div className="flex flex-col">
                 <span className="text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-text-primary to-text-secondary group-hover:to-primary transition-all duration-300">

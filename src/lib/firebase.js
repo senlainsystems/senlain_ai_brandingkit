@@ -18,8 +18,8 @@ export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const analytics = getAnalytics(app);
 
-// Connect to emulators if running locally
-if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+// Connect to emulators if enabled in .env
+if (import.meta.env.VITE_USE_FIREBASE_EMULATOR === 'true') {
     console.log("Connecting to Auth and Firestore emulators...");
     connectAuthEmulator(auth, "http://localhost:9099");
     connectFirestoreEmulator(db, "localhost", 8080);

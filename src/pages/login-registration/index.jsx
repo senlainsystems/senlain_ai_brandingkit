@@ -103,131 +103,158 @@ const LoginRegistration = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 flex">
-      {/* Left Side - Brand Examples */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary to-secondary p-8 relative overflow-hidden">
-        <div className="absolute inset-0 bg-black/20"></div>
-        <div className="relative z-10 flex flex-col justify-center w-full">
-          <div className="mb-8">
-            <h1 className="text-4xl font-bold text-white mb-4">
-              Create Stunning Brand Identities
-            </h1>
-            <p className="text-xl text-white/90 mb-8">
-              Join thousands of designers and businesses creating professional brand kits with AI
-            </p>
-          </div>
+    <div className="min-h-screen bg-background relative overflow-hidden flex items-center justify-center p-4">
+      {/* Background Decorative Elements */}
+      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/10 rounded-full blur-[120px] pointer-events-none animate-pulse-slow"></div>
+      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-secondary/10 rounded-full blur-[120px] pointer-events-none animate-pulse-slow" style={{ animationDelay: '2s' }}></div>
 
-          <div className="space-y-6">
-            <h3 className="text-2xl font-semibold text-white mb-4">
-              Featured Brand Examples
-            </h3>
+      <div className="w-full max-w-6xl flex bg-surface/40 backdrop-blur-xl border border-white/20 rounded-[2.5rem] shadow-2xl overflow-hidden min-h-[800px]">
+        {/* Left Side - Success Showcase */}
+        <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-indigo-600 via-violet-600 to-purple-700 p-12 relative overflow-hidden">
+          <div className="absolute inset-0 bg-black/10"></div>
+          {/* Animated meshes or patterns can go here */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
 
-            {brandExamples.map((brand) => (
-              <div key={brand.id} className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20 transform transition-all duration-300 hover:scale-105">
-                <div className="flex items-center space-x-4 mb-4">
-                  <LazyImage
-                    src={brand.logo}
-                    alt={brand.name}
-                    className="w-12 h-12 rounded-lg object-cover"
-                    placeholder={
-                      <div className="w-12 h-12 rounded-lg bg-white/20 flex items-center justify-center">
-                        <Icon name="Image" size={20} className="text-white/60" />
-                      </div>
-                    }
-                  />
-                  <div>
-                    <h4 className="text-lg font-semibold text-white">{brand.name}</h4>
-                    <p className="text-white/70 text-sm">{brand.industry}</p>
-                  </div>
-                </div>
-
-                <div className="flex space-x-2">
-                  {brand.colors.map((color, index) => (
-                    <div
-                      key={index}
-                      className="w-8 h-8 rounded-full border-2 border-white/30"
-                      style={{ backgroundColor: color }}
-                    ></div>
-                  ))}
-                </div>
+          <div className="relative z-10 flex flex-col justify-between h-full">
+            <div>
+              <div className="inline-flex items-center space-x-2 px-4 py-2 bg-white/10 backdrop-blur-md rounded-full border border-white/20 mb-8">
+                <Icon name="Stars" size={16} className="text-yellow-300" />
+                <span className="text-xs font-semibold text-white/90 uppercase tracking-widest">Powered by Genkit AI</span>
               </div>
-            ))}
+              <h1 className="text-5xl font-bold text-white mb-6 leading-tight">
+                Turn your vision <br />
+                <span className="text-indigo-200">into a masterpiece.</span>
+              </h1>
+              <p className="text-lg text-white/80 leading-relaxed max-w-md">
+                Generate professional brand identities, logos, and taglines in seconds using state-of-the-art artificial intelligence.
+              </p>
+            </div>
+
+            <div className="space-y-6">
+              <h3 className="text-sm font-bold text-white/60 uppercase tracking-widest">
+                Trusted by 500+ Innovators
+              </h3>
+
+              <div className="grid grid-cols-1 gap-4">
+                {brandExamples.map((brand) => (
+                  <div key={brand.id} className="bg-white/10 backdrop-blur-md rounded-2xl p-5 border border-white/20 transition-all duration-300 hover:bg-white/15 hover:translate-x-2">
+                    <div className="flex items-center space-x-4 mb-4">
+                      <div className="w-12 h-12 rounded-xl bg-white/20 p-2 overflow-hidden">
+                        <LazyImage
+                          src={brand.logo}
+                          alt={brand.name}
+                          className="w-full h-full object-cover rounded-lg"
+                          placeholder={<div className="w-full h-full bg-white/10 animate-pulse" />}
+                        />
+                      </div>
+                      <div>
+                        <h4 className="text-base font-bold text-white">{brand.name}</h4>
+                        <p className="text-white/60 text-xs">{brand.industry}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div className="flex -space-x-2">
+                        {brand.colors.map((color, index) => (
+                          <div
+                            key={index}
+                            className="w-6 h-6 rounded-full border-2 border-white/30"
+                            style={{ backgroundColor: color }}
+                          ></div>
+                        ))}
+                      </div>
+                      <span className="text-[10px] font-bold text-white/40 uppercase tracking-tighter">AI Generated</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Right Side - Auth Forms */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
-        <div className="w-full max-w-md">
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center space-x-2 mb-6">
-              <div className="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
-                <Icon name="Palette" size={24} color="white" />
+        {/* Right Side - Auth Forms */}
+        <div className="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-16">
+          <div className="w-full max-w-md">
+            <div className="text-center mb-10">
+              <div className="inline-flex items-center space-x-3 mb-8">
+                <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-lg shadow-primary/30 p-2">
+                  <img src="/Senlain_logo-removebg-preview.png" alt="Logo" className="w-full h-full object-contain" />
+                </div>
+                <span className="text-3xl font-black text-text-primary tracking-tight italic">
+                  Brand<span className="text-primary">bot</span>
+                </span>
               </div>
-              <span className="text-2xl font-bold text-text-primary">BrandKit AI</span>
-            </div>
-          </div>
-
-          {/* Tab Navigation */}
-          <div className="flex bg-surface rounded-lg p-1 mb-8">
-            <button
-              onClick={() => setActiveTab('login')}
-              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${activeTab === 'login' ? 'bg-primary text-white' : 'text-text-secondary hover:text-text-primary'
-                }`}
-            >
-              Sign In
-            </button>
-            <button
-              onClick={() => setActiveTab('register')}
-              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${activeTab === 'register' ? 'bg-primary text-white' : 'text-text-secondary hover:text-text-primary'
-                }`}
-            >
-              Sign Up
-            </button>
-          </div>
-
-          {/* Auth Forms */}
-          {activeTab === 'login' ? (
-            <LoginForm onSubmit={handleLogin} isLoading={isLoading} />
-          ) : (
-            <RegisterForm onSubmit={handleRegister} isLoading={isLoading} />
-          )}
-
-          {/* Social Login */}
-          <div className="mt-8">
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-border"></div>
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-background text-text-secondary">Or continue with</span>
-              </div>
+              <h2 className="text-2xl font-bold text-text-primary mb-2">
+                {activeTab === 'login' ? 'Welcome Back' : 'Create Account'}
+              </h2>
+              <p className="text-text-secondary">
+                {activeTab === 'login'
+                  ? 'Sign in to access your brand workspace'
+                  : 'Start your brand journey today for free'}
+              </p>
             </div>
 
-            <div className="mt-6 grid grid-cols-2 gap-3">
-              <button className="w-full inline-flex justify-center py-2 px-4 border border-border rounded-md shadow-sm bg-surface text-sm font-medium text-text-secondary hover:bg-surface-hover transition-colors">
-                <Icon name="Mail" size={20} />
-                <span className="ml-2">Google</span>
+            {/* Tab Navigation - Pill Style */}
+            <div className="flex bg-surface-hover rounded-2xl p-1.5 mb-10 border border-border/50">
+              <button
+                onClick={() => setActiveTab('login')}
+                className={`flex-1 py-3 px-6 rounded-xl text-sm font-bold transition-all duration-300 ${activeTab === 'login'
+                  ? 'bg-white text-primary shadow-sm'
+                  : 'text-text-secondary hover:text-text-primary'
+                  }`}
+              >
+                Sign In
               </button>
-              <button className="w-full inline-flex justify-center py-2 px-4 border border-border rounded-md shadow-sm bg-surface text-sm font-medium text-text-secondary hover:bg-surface-hover transition-colors">
-                <Icon name="Github" size={20} />
-                <span className="ml-2">GitHub</span>
+              <button
+                onClick={() => setActiveTab('register')}
+                className={`flex-1 py-3 px-6 rounded-xl text-sm font-bold transition-all duration-300 ${activeTab === 'register'
+                  ? 'bg-white text-primary shadow-sm'
+                  : 'text-text-secondary hover:text-text-primary'
+                  }`}
+              >
+                Sign Up
               </button>
             </div>
-          </div>
 
-          {/* Footer */}
-          <div className="mt-8 text-center">
-            <p className="text-xs text-text-secondary">
-              By signing up, you agree to our{' '}
-              <a href="#" className="text-primary hover:text-primary-hover">
-                Terms of Service
-              </a>{' '}
-              and{' '}
-              <a href="#" className="text-primary hover:text-primary-hover">
-                Privacy Policy
-              </a>
-            </p>
+            {/* Auth Forms */}
+            <div className="min-h-[340px]">
+              {activeTab === 'login' ? (
+                <LoginForm onSubmit={handleLogin} isLoading={isLoading} />
+              ) : (
+                <RegisterForm onSubmit={handleRegister} isLoading={isLoading} />
+              )}
+            </div>
+
+            {/* Social Login */}
+            <div className="mt-10">
+              <div className="relative mb-8">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-border"></div>
+                </div>
+                <div className="relative flex justify-center text-xs font-bold uppercase tracking-widest">
+                  <span className="px-4 bg-transparent text-text-muted">Or continue with</span>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <button className="flex items-center justify-center space-x-2 py-3.5 px-4 border border-border rounded-2xl bg-white hover:bg-surface-hover transition-all duration-300 shadow-sm active:scale-95">
+                  <Icon name="Mail" size={20} className="text-[#EA4335]" />
+                  <span className="text-sm font-bold text-text-primary">Google</span>
+                </button>
+                <button className="flex items-center justify-center space-x-2 py-3.5 px-4 border border-border rounded-2xl bg-white hover:bg-surface-hover transition-all duration-300 shadow-sm active:scale-95">
+                  <Icon name="Github" size={20} className="text-text-primary" />
+                  <span className="text-sm font-bold text-text-primary">GitHub</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="mt-12 text-center">
+              <p className="text-xs text-text-muted leading-relaxed">
+                By entering, you agree to Brandbot's <br />
+                <a href="#" className="font-bold text-primary hover:underline underline-offset-4">Terms</a> and <a href="#" className="font-bold text-primary hover:underline underline-offset-4">Privacy Policy</a>
+              </p>
+            </div>
           </div>
         </div>
       </div>

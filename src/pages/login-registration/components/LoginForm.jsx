@@ -43,7 +43,7 @@ const LoginForm = ({ onSubmit, isLoading }) => {
       ...prev,
       [name]: type === 'checkbox' ? checked : value
     }));
-    
+
     // Clear error when user starts typing
     if (errors[name]) {
       setErrors(prev => ({
@@ -54,112 +54,121 @@ const LoginForm = ({ onSubmit, isLoading }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div>
-        <label htmlFor="email" className="block text-sm font-medium text-text-primary mb-2">
+    <form onSubmit={handleSubmit} className="space-y-6 animate-fade-in-up">
+      <div className="space-y-2">
+        <label htmlFor="email" className="block text-xs font-black text-text-muted uppercase tracking-widest ml-1">
           Email Address
         </label>
-        <div className="relative">
+        <div className="relative group">
           <input
             id="email"
             name="email"
             type="email"
             value={formData.email}
             onChange={handleChange}
-            className={`w-full px-4 py-3 pl-12 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-colors ${
-              errors.email ? 'border-red-300' : 'border-border'
-            }`}
-            placeholder="Enter your email"
+            className={`w-full px-5 py-4 pl-12 bg-white border rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-300 outline-none text-sm font-medium ${errors.email ? 'border-error shadow-sm shadow-error/10' : 'border-border group-hover:border-primary/50'
+              }`}
+            placeholder="name@company.com"
           />
-          <Icon 
-            name="Mail" 
-            size={20} 
-            className="absolute left-4 top-1/2 transform -translate-y-1/2 text-text-secondary" 
+          <Icon
+            name="Mail"
+            size={18}
+            className={`absolute left-4 top-1/2 transform -translate-y-1/2 transition-colors duration-300 ${errors.email ? 'text-error' : 'text-text-muted group-focus-within:text-primary'
+              }`}
           />
         </div>
         {errors.email && (
-          <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+          <p className="mt-1 text-[10px] font-bold text-error uppercase tracking-tight ml-2">{errors.email}</p>
         )}
       </div>
 
-      <div>
-        <label htmlFor="password" className="block text-sm font-medium text-text-primary mb-2">
-          Password
-        </label>
-        <div className="relative">
+      <div className="space-y-2">
+        <div className="flex items-center justify-between ml-1">
+          <label htmlFor="password" className="block text-xs font-black text-text-muted uppercase tracking-widest">
+            Password
+          </label>
+          <a href="#" className="text-[10px] font-bold text-primary hover:underline underline-offset-4 uppercase tracking-tighter">
+            Forgot?
+          </a>
+        </div>
+        <div className="relative group">
           <input
             id="password"
             name="password"
             type={showPassword ? 'text' : 'password'}
             value={formData.password}
             onChange={handleChange}
-            className={`w-full px-4 py-3 pl-12 pr-12 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-colors ${
-              errors.password ? 'border-red-300' : 'border-border'
-            }`}
-            placeholder="Enter your password"
+            className={`w-full px-5 py-4 pl-12 pr-12 bg-white border rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-300 outline-none text-sm font-medium ${errors.password ? 'border-error shadow-sm shadow-error/10' : 'border-border group-hover:border-primary/50'
+              }`}
+            placeholder="••••••••"
           />
-          <Icon 
-            name="Lock" 
-            size={20} 
-            className="absolute left-4 top-1/2 transform -translate-y-1/2 text-text-secondary" 
+          <Icon
+            name="Lock"
+            size={18}
+            className={`absolute left-4 top-1/2 transform -translate-y-1/2 transition-colors duration-300 ${errors.password ? 'text-error' : 'text-text-muted group-focus-within:text-primary'
+              }`}
           />
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 text-text-secondary hover:text-text-primary"
+            className="absolute right-4 top-1/2 transform -translate-y-1/2 text-text-muted hover:text-text-primary transition-colors"
           >
-            <Icon name={showPassword ? 'EyeOff' : 'Eye'} size={20} />
+            <Icon name={showPassword ? 'EyeOff' : 'Eye'} size={18} />
           </button>
         </div>
         {errors.password && (
-          <p className="mt-1 text-sm text-red-600">{errors.password}</p>
+          <p className="mt-1 text-[10px] font-bold text-error uppercase tracking-tight ml-2">{errors.password}</p>
         )}
       </div>
 
-      <div className="flex items-center justify-between">
-        <div className="flex items-center">
-          <input
-            id="rememberMe"
-            name="rememberMe"
-            type="checkbox"
-            checked={formData.rememberMe}
-            onChange={handleChange}
-            className="h-4 w-4 text-primary focus:ring-primary border-border rounded"
-          />
-          <label htmlFor="rememberMe" className="ml-2 block text-sm text-text-secondary">
-            Remember me
+      <div className="flex items-center">
+        <div className="flex items-center cursor-pointer group">
+          <div className="relative flex items-center">
+            <input
+              id="rememberMe"
+              name="rememberMe"
+              type="checkbox"
+              checked={formData.rememberMe}
+              onChange={handleChange}
+              className="peer h-5 w-5 opacity-0 absolute cursor-pointer"
+            />
+            <div className="h-5 w-5 border-2 border-border rounded-md peer-checked:bg-primary peer-checked:border-primary transition-all duration-200"></div>
+            <Icon
+              name="Check"
+              size={12}
+              className="absolute left-[4px] top-[4px] text-white opacity-0 peer-checked:opacity-100 transition-opacity"
+            />
+          </div>
+          <label htmlFor="rememberMe" className="ml-3 block text-sm font-medium text-text-secondary group-hover:text-text-primary transition-colors cursor-pointer">
+            Keep me signed in
           </label>
-        </div>
-
-        <div className="text-sm">
-          <a href="#" className="text-primary hover:text-primary-hover">
-            Forgot your password?
-          </a>
         </div>
       </div>
 
       <button
         type="submit"
         disabled={isLoading}
-        className="w-full btn-primary py-3 px-4 rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+        className="w-full relative py-4 px-6 bg-primary hover:bg-primary-hover text-white rounded-2xl font-bold shadow-lg shadow-primary/25 transition-all duration-300 hover:-translate-y-1 active:scale-95 disabled:opacity-50 disabled:translate-y-0 disabled:scale-100 flex items-center justify-center space-x-2 overflow-hidden"
       >
+        <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 -translate-x-full hover:animate-shimmer"></div>
         {isLoading ? (
           <>
-            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-            <span>Signing in...</span>
+            <div className="animate-spin rounded-full h-5 w-5 border-2 border-white/30 border-t-white"></div>
+            <span className="tracking-wide text-sm uppercase">Authorizing...</span>
           </>
         ) : (
           <>
-            <Icon name="LogIn" size={20} />
-            <span>Sign In</span>
+            <span className="tracking-wide text-sm uppercase">Enter Workspace</span>
+            <Icon name="ArrowRight" size={18} />
           </>
         )}
       </button>
 
-      <div className="text-center">
-        <p className="text-sm text-text-secondary">
-          Demo credentials: demo@example.com / demo123
-        </p>
+      <div className="pt-2">
+        <div className="flex items-center space-x-3 text-xs text-text-muted justify-center">
+          <Icon name="Info" size={14} />
+          <span>Quick access: demo@example.com / demo123</span>
+        </div>
       </div>
     </form>
   );

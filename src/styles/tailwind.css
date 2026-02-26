@@ -6,118 +6,89 @@
 
 @layer base {
   :root {
-    /* Primary Colors */
-    --color-primary: #1E40AF;
-    /* Deep blue (primary) - blue-800 */
-    --color-primary-50: #EFF6FF;
-    /* Very light blue (50-level shade) - blue-50 */
-    --color-primary-100: #DBEAFE;
-    /* Light blue (100-level shade) - blue-100 */
-    --color-primary-200: #BFDBFE;
-    /* Light blue (200-level shade) - blue-200 */
-    --color-primary-500: #3B82F6;
-    /* Medium blue (500-level shade) - blue-500 */
-    --color-primary-600: #2563EB;
-    /* Medium-dark blue (600-level shade) - blue-600 */
-    --color-primary-700: #1D4ED8;
-    /* Dark blue (700-level shade) - blue-700 */
-    --color-primary-900: #1E3A8A;
-    /* Very dark blue (900-level shade) - blue-900 */
+    /* Primary Colors - Zoviz Deep Indigo */
+    --color-primary: #4F46E5;
+    /* Indigo 600 */
+    --color-primary-50: #EEF2FF;
+    --color-primary-100: #E0E7FF;
+    --color-primary-200: #C7D2FE;
+    --color-primary-500: #6366F1;
+    /* Indigo 500 */
+    --color-primary-600: #4F46E5;
+    --color-primary-700: #4338CA;
+    --color-primary-900: #312E81;
 
-    /* Secondary Colors */
-    --color-secondary: #7C3AED;
-    /* Vibrant purple (secondary) - violet-600 */
-    --color-secondary-50: #F5F3FF;
-    /* Very light purple (50-level shade) - violet-50 */
-    --color-secondary-100: #EDE9FE;
-    /* Light purple (100-level shade) - violet-100 */
-    --color-secondary-200: #DDD6FE;
-    /* Light purple (200-level shade) - violet-200 */
-    --color-secondary-500: #8B5CF6;
-    /* Medium purple (500-level shade) - violet-500 */
-    --color-secondary-700: #6D28D9;
-    /* Dark purple (700-level shade) - violet-700 */
-    --color-secondary-900: #4C1D95;
-    /* Very dark purple (900-level shade) - violet-900 */
+    /* Secondary Colors - Vibrant Pink/Purple Accent */
+    --color-secondary: #D946EF;
+    /* Fuchsia 500 */
+    --color-secondary-50: #FDF4FF;
+    --color-secondary-100: #FAE8FF;
+    --color-secondary-200: #F5D0FE;
+    --color-secondary-500: #D946EF;
+    --color-secondary-700: #A21CAF;
+    --color-secondary-900: #701A75;
 
-    /* Accent Colors */
-    --color-accent: #F59E0B;
-    /* Warm amber (accent) - amber-500 */
-    --color-accent-50: #FFFBEB;
-    /* Very light amber (50-level shade) - amber-50 */
-    --color-accent-100: #FEF3C7;
-    /* Light amber (100-level shade) - amber-100 */
-    --color-accent-200: #FDE68A;
-    /* Light amber (200-level shade) - amber-200 */
-    --color-accent-400: #FBBF24;
-    /* Medium-light amber (400-level shade) - amber-400 */
-    --color-accent-600: #D97706;
-    /* Medium-dark amber (600-level shade) - amber-600 */
-    --color-accent-700: #B45309;
-    /* Dark amber (700-level shade) - amber-700 */
-    --color-accent-900: #78350F;
-    /* Very dark amber (900-level shade) - amber-900 */
+    /* Accent Colors - Bright Teal/Cyan for highlights */
+    --color-accent: #06B6D4;
+    /* Cyan 500 */
+    --color-accent-50: #ECFEFF;
+    --color-accent-100: #CFFAFE;
+    --color-accent-200: #A5F3FC;
+    --color-accent-400: #22D3EE;
+    --color-accent-600: #0891B2;
+    --color-accent-700: #0E7490;
+    --color-accent-900: #164E63;
 
     /* Background Colors */
-    --color-background: #FAFBFC;
-    /* Soft off-white (background) - slate-50 */
-    --color-surface: #FFFFFF;
-    /* Pure white (surface) - white */
+    --color-background: #0F172A;
+    /* Slate 900 - Dark Mode Default for premium feel */
+    --color-surface: #1E293B;
+    /* Slate 800 */
+    --color-surface-hover: #334155;
+    /* Slate 700 */
 
     /* Text Colors */
-    --color-text-primary: #111827;
-    /* Near-black (text primary) - gray-900 */
-    --color-text-secondary: #6B7280;
-    /* Medium gray (text secondary) - gray-500 */
-    --color-text-muted: #9CA3AF;
-    /* Light gray (text muted) - gray-400 */
+    --color-text-primary: #F8FAFC;
+    /* Slate 50 */
+    --color-text-secondary: #94A3B8;
+    /* Slate 400 */
+    --color-text-muted: #64748B;
+    /* Slate 500 */
+    --color-text-inverse: #0F172A;
+    /* Slate 900 */
 
     /* Status Colors */
     --color-success: #10B981;
-    /* Fresh green (success) - emerald-500 */
     --color-success-50: #ECFDF5;
-    /* Very light green (50-level shade) - emerald-50 */
     --color-success-100: #D1FAE5;
-    /* Light green (100-level shade) - emerald-100 */
     --color-success-600: #059669;
-    /* Medium-dark green (600-level shade) - emerald-600 */
     --color-success-700: #047857;
-    /* Dark green (700-level shade) - emerald-700 */
 
     --color-warning: #F59E0B;
-    /* Consistent amber (warning) - amber-500 */
     --color-warning-50: #FFFBEB;
-    /* Very light amber (50-level shade) - amber-50 */
     --color-warning-100: #FEF3C7;
-    /* Light amber (100-level shade) - amber-100 */
     --color-warning-600: #D97706;
-    /* Medium-dark amber (600-level shade) - amber-600 */
 
     --color-error: #EF4444;
-    /* Clear red (error) - red-500 */
     --color-error-50: #FEF2F2;
-    /* Very light red (50-level shade) - red-50 */
     --color-error-100: #FEE2E2;
-    /* Light red (100-level shade) - red-100 */
     --color-error-600: #DC2626;
-    /* Medium-dark red (600-level shade) - red-600 */
     --color-error-700: #B91C1C;
-    /* Dark red (700-level shade) - red-700 */
 
     /* Border Colors */
-    --color-border: #E5E7EB;
-    /* Minimal border (border) - gray-200 */
-    --color-border-light: #F3F4F6;
-    /* Light border (border-light) - gray-100 */
-    --color-border-dark: #D1D5DB;
-    /* Dark border (border-dark) - gray-300 */
+    --color-border: #334155;
+    /* Slate 700 */
+    --color-border-light: #475569;
+    /* Slate 600 */
+    --color-border-dark: #1E293B;
+    /* Slate 800 */
 
     /* Shadow Colors */
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    --shadow-base: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+    --shadow-base: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.15);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.15);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.15);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.15);
   }
 
   * {

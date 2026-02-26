@@ -67,7 +67,7 @@ const RegisterForm = ({ onSubmit, isLoading }) => {
       ...prev,
       [name]: type === 'checkbox' ? checked : value
     }));
-    
+
     // Clear error when user starts typing
     if (errors[name]) {
       setErrors(prev => ({
@@ -92,10 +92,10 @@ const RegisterForm = ({ onSubmit, isLoading }) => {
   const strengthColors = ['bg-red-500', 'bg-orange-500', 'bg-yellow-500', 'bg-blue-500', 'bg-green-500'];
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-5 animate-fade-in-up">
       <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label htmlFor="firstName" className="block text-sm font-medium text-text-primary mb-2">
+        <div className="space-y-2">
+          <label htmlFor="firstName" className="block text-xs font-black text-text-muted uppercase tracking-widest ml-1">
             First Name
           </label>
           <input
@@ -104,18 +104,17 @@ const RegisterForm = ({ onSubmit, isLoading }) => {
             type="text"
             value={formData.firstName}
             onChange={handleChange}
-            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-colors ${
-              errors.firstName ? 'border-red-300' : 'border-border'
-            }`}
+            className={`w-full px-5 py-3.5 bg-white border rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-300 outline-none text-sm font-medium ${errors.firstName ? 'border-error shadow-sm shadow-error/10' : 'border-border hover:border-primary/50'
+              }`}
             placeholder="John"
           />
           {errors.firstName && (
-            <p className="mt-1 text-sm text-red-600">{errors.firstName}</p>
+            <p className="mt-1 text-[10px] font-bold text-error uppercase tracking-tight ml-2">{errors.firstName}</p>
           )}
         </div>
 
-        <div>
-          <label htmlFor="lastName" className="block text-sm font-medium text-text-primary mb-2">
+        <div className="space-y-2">
+          <label htmlFor="lastName" className="block text-xs font-black text-text-muted uppercase tracking-widest ml-1">
             Last Name
           </label>
           <input
@@ -124,169 +123,175 @@ const RegisterForm = ({ onSubmit, isLoading }) => {
             type="text"
             value={formData.lastName}
             onChange={handleChange}
-            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-colors ${
-              errors.lastName ? 'border-red-300' : 'border-border'
-            }`}
+            className={`w-full px-5 py-3.5 bg-white border rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-300 outline-none text-sm font-medium ${errors.lastName ? 'border-error shadow-sm shadow-error/10' : 'border-border hover:border-primary/50'
+              }`}
             placeholder="Doe"
           />
           {errors.lastName && (
-            <p className="mt-1 text-sm text-red-600">{errors.lastName}</p>
+            <p className="mt-1 text-[10px] font-bold text-error uppercase tracking-tight ml-2">{errors.lastName}</p>
           )}
         </div>
       </div>
 
-      <div>
-        <label htmlFor="email" className="block text-sm font-medium text-text-primary mb-2">
+      <div className="space-y-2">
+        <label htmlFor="email" className="block text-xs font-black text-text-muted uppercase tracking-widest ml-1">
           Email Address
         </label>
-        <div className="relative">
+        <div className="relative group">
           <input
             id="email"
             name="email"
             type="email"
             value={formData.email}
             onChange={handleChange}
-            className={`w-full px-4 py-3 pl-12 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-colors ${
-              errors.email ? 'border-red-300' : 'border-border'
-            }`}
+            className={`w-full px-5 py-3.5 pl-12 bg-white border rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-300 outline-none text-sm font-medium ${errors.email ? 'border-error shadow-sm shadow-error/10' : 'border-border group-hover:border-primary/50'
+              }`}
             placeholder="john@example.com"
           />
-          <Icon 
-            name="Mail" 
-            size={20} 
-            className="absolute left-4 top-1/2 transform -translate-y-1/2 text-text-secondary" 
+          <Icon
+            name="Mail"
+            size={18}
+            className={`absolute left-4 top-1/2 transform -translate-y-1/2 transition-colors duration-300 ${errors.email ? 'text-error' : 'text-text-muted group-focus-within:text-primary'
+              }`}
           />
         </div>
         {errors.email && (
-          <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+          <p className="mt-1 text-[10px] font-bold text-error uppercase tracking-tight ml-2">{errors.email}</p>
         )}
       </div>
 
-      <div>
-        <label htmlFor="password" className="block text-sm font-medium text-text-primary mb-2">
+      <div className="space-y-2">
+        <label htmlFor="password" className="block text-xs font-black text-text-muted uppercase tracking-widest ml-1">
           Password
         </label>
-        <div className="relative">
+        <div className="relative group">
           <input
             id="password"
             name="password"
             type={showPassword ? 'text' : 'password'}
             value={formData.password}
             onChange={handleChange}
-            className={`w-full px-4 py-3 pl-12 pr-12 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-colors ${
-              errors.password ? 'border-red-300' : 'border-border'
-            }`}
-            placeholder="Create a strong password"
+            className={`w-full px-5 py-3.5 pl-12 pr-12 bg-white border rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-300 outline-none text-sm font-medium ${errors.password ? 'border-error shadow-sm shadow-error/10' : 'border-border group-hover:border-primary/50'
+              }`}
+            placeholder="Min. 8 characters"
           />
-          <Icon 
-            name="Lock" 
-            size={20} 
-            className="absolute left-4 top-1/2 transform -translate-y-1/2 text-text-secondary" 
+          <Icon
+            name="Lock"
+            size={18}
+            className={`absolute left-4 top-1/2 transform -translate-y-1/2 transition-colors duration-300 ${errors.password ? 'text-error' : 'text-text-muted group-focus-within:text-primary'
+              }`}
           />
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 text-text-secondary hover:text-text-primary"
+            className="absolute right-4 top-1/2 transform -translate-y-1/2 text-text-muted hover:text-text-primary transition-colors"
           >
-            <Icon name={showPassword ? 'EyeOff' : 'Eye'} size={20} />
+            <Icon name={showPassword ? 'EyeOff' : 'Eye'} size={18} />
           </button>
         </div>
-        
+
         {formData.password && (
-          <div className="mt-2">
-            <div className="flex items-center space-x-2">
-              <div className="flex-1 bg-gray-200 rounded-full h-2">
-                <div 
-                  className={`h-2 rounded-full transition-all duration-300 ${strengthColors[passwordStrength - 1] || 'bg-gray-200'}`}
-                  style={{ width: `${(passwordStrength / 5) * 100}%` }}
-                ></div>
-              </div>
-              <span className="text-xs text-text-secondary">
+          <div className="mt-3 px-1">
+            <div className="flex items-center justify-between mb-1.5">
+              <span className="text-[10px] font-black text-text-muted uppercase tracking-tighter">Security Strength</span>
+              <span className={`text-[10px] font-black uppercase tracking-tighter ${passwordStrength <= 2 ? 'text-error' : passwordStrength <= 4 ? 'text-warning' : 'text-success'
+                }`}>
                 {strengthLabels[passwordStrength - 1] || 'Very Weak'}
               </span>
             </div>
+            <div className="flex space-x-1.5">
+              {[1, 2, 3, 4, 5].map((level) => (
+                <div
+                  key={level}
+                  className={`h-1.5 flex-1 rounded-full transition-all duration-500 ${level <= passwordStrength
+                      ? (passwordStrength <= 2 ? 'bg-error' : passwordStrength <= 4 ? 'bg-warning' : 'bg-success')
+                      : 'bg-surface-hover'
+                    }`}
+                ></div>
+              ))}
+            </div>
           </div>
         )}
-        
+
         {errors.password && (
-          <p className="mt-1 text-sm text-red-600">{errors.password}</p>
+          <p className="mt-1 text-[10px] font-bold text-error uppercase tracking-tight ml-2">{errors.password}</p>
         )}
       </div>
 
-      <div>
-        <label htmlFor="confirmPassword" className="block text-sm font-medium text-text-primary mb-2">
+      <div className="space-y-2">
+        <label htmlFor="confirmPassword" className="block text-xs font-black text-text-muted uppercase tracking-widest ml-1">
           Confirm Password
         </label>
-        <div className="relative">
+        <div className="relative group">
           <input
             id="confirmPassword"
             name="confirmPassword"
             type={showConfirmPassword ? 'text' : 'password'}
             value={formData.confirmPassword}
             onChange={handleChange}
-            className={`w-full px-4 py-3 pl-12 pr-12 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-colors ${
-              errors.confirmPassword ? 'border-red-300' : 'border-border'
-            }`}
-            placeholder="Confirm your password"
+            className={`w-full px-5 py-3.5 pl-12 pr-12 bg-white border rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-300 outline-none text-sm font-medium ${errors.confirmPassword ? 'border-error shadow-sm shadow-error/10' : 'border-border group-hover:border-primary/50'
+              }`}
+            placeholder="Confirm Password"
           />
-          <Icon 
-            name="Lock" 
-            size={20} 
-            className="absolute left-4 top-1/2 transform -translate-y-1/2 text-text-secondary" 
+          <Icon
+            name="Lock"
+            size={18}
+            className={`absolute left-4 top-1/2 transform -translate-y-1/2 transition-colors duration-300 ${errors.confirmPassword ? 'text-error' : 'text-text-muted group-focus-within:text-primary'
+              }`}
           />
           <button
             type="button"
             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 text-text-secondary hover:text-text-primary"
+            className="absolute right-4 top-1/2 transform -translate-y-1/2 text-text-muted hover:text-text-primary transition-colors"
           >
-            <Icon name={showConfirmPassword ? 'EyeOff' : 'Eye'} size={20} />
+            <Icon name={showConfirmPassword ? 'EyeOff' : 'Eye'} size={18} />
           </button>
         </div>
         {errors.confirmPassword && (
-          <p className="mt-1 text-sm text-red-600">{errors.confirmPassword}</p>
+          <p className="mt-1 text-[10px] font-bold text-error uppercase tracking-tight ml-2">{errors.confirmPassword}</p>
         )}
       </div>
 
-      <div>
-        <div className="flex items-start">
+      <div className="flex items-start group cursor-pointer pt-1">
+        <div className="relative flex items-center mt-0.5">
           <input
             id="agreeToTerms"
             name="agreeToTerms"
             type="checkbox"
             checked={formData.agreeToTerms}
             onChange={handleChange}
-            className="h-4 w-4 text-primary focus:ring-primary border-border rounded mt-1"
+            className="peer h-5 w-5 opacity-0 absolute cursor-pointer"
           />
-          <label htmlFor="agreeToTerms" className="ml-2 block text-sm text-text-secondary">
-            I agree to the{' '}
-            <a href="#" className="text-primary hover:text-primary-hover">
-              Terms of Service
-            </a>{' '}
-            and{' '}
-            <a href="#" className="text-primary hover:text-primary-hover">
-              Privacy Policy
-            </a>
-          </label>
+          <div className="h-5 w-5 border-2 border-border rounded-md peer-checked:bg-primary peer-checked:border-primary transition-all duration-200"></div>
+          <Icon
+            name="Check"
+            size={12}
+            className="absolute left-[4px] top-[4px] text-white opacity-0 peer-checked:opacity-100 transition-opacity"
+          />
         </div>
-        {errors.agreeToTerms && (
-          <p className="mt-1 text-sm text-red-600">{errors.agreeToTerms}</p>
-        )}
+        <label htmlFor="agreeToTerms" className="ml-3 block text-xs font-medium text-text-secondary group-hover:text-text-primary transition-colors cursor-pointer leading-tight">
+          I agree to the <a href="#" className="font-bold text-primary hover:underline">Terms of Service</a> and <a href="#" className="font-bold text-primary hover:underline">Privacy Policy</a>
+        </label>
       </div>
+      {errors.agreeToTerms && (
+        <p className="mt-1 text-[10px] font-bold text-error uppercase tracking-tight ml-2">{errors.agreeToTerms}</p>
+      )}
 
       <button
         type="submit"
         disabled={isLoading}
-        className="w-full btn-primary py-3 px-4 rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+        className="w-full relative py-4 px-6 bg-primary hover:bg-primary-hover text-white rounded-2xl font-bold shadow-lg shadow-primary/25 transition-all duration-300 hover:-translate-y-1 active:scale-95 disabled:opacity-50 disabled:translate-y-0 disabled:scale-100 flex items-center justify-center space-x-2 overflow-hidden mt-4"
       >
+        <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 -translate-x-full hover:animate-shimmer"></div>
         {isLoading ? (
           <>
-            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-            <span>Creating account...</span>
+            <div className="animate-spin rounded-full h-5 w-5 border-2 border-white/30 border-t-white"></div>
+            <span className="tracking-wide text-sm uppercase">Creating Account...</span>
           </>
         ) : (
           <>
-            <Icon name="UserPlus" size={20} />
-            <span>Create Account</span>
+            <span className="tracking-wide text-sm uppercase">Join Brandbot</span>
+            <Icon name="UserPlus" size={18} />
           </>
         )}
       </button>

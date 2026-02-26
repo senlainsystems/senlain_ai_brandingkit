@@ -4,6 +4,7 @@ import ScrollToTop from "components/ScrollToTop";
 import ErrorBoundary from "components/ErrorBoundary";
 
 // Page imports
+import LandingPage from "pages/landing";
 import LoginRegistration from "pages/login-registration";
 import BrandBriefCreation from "pages/brand-brief-creation";
 import AIGenerationInterface from "pages/ai-generation-interface";
@@ -23,7 +24,7 @@ const Routes = () => {
           <Route path="/brand-kit-preview-editor" element={<BrandKitPreviewEditor />} />
           <Route path="/brand-kit-gallery" element={<BrandKitGallery />} />
           <Route path="/account-settings-billing" element={<AccountSettingsBilling />} />
-          <Route path="/" element={<LoginRegistration />} />
+          <Route path="/" element={<LandingPage />} />
         </RouterRoutes>
       </ErrorBoundary>
     </BrowserRouter>
