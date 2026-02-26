@@ -7,27 +7,27 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Primary - Deep Indigo/Blue
-        'primary': '#4F46E5', // Indigo-600
-        'primary-50': '#EEF2FF',
-        'primary-100': '#E0E7FF',
-        'primary-200': '#C7D2FE',
-        'primary-500': '#6366F1',
-        'primary-600': '#4F46E5',
-        'primary-700': '#4338CA',
-        'primary-900': '#312E81',
+        // Primary - Zoviz Deep Teal/Emerald
+        'primary': '#006D77', // Teal-600 approx
+        'primary-50': '#F0FDFA',
+        'primary-100': '#CCFBF1',
+        'primary-200': '#99F6E4',
+        'primary-500': '#14B8A6',
+        'primary-600': '#0D9488',
+        'primary-700': '#0F766E',
+        'primary-900': '#134E4A',
 
-        // Secondary - Vibrant Violet
-        'secondary': '#8B5CF6', // Violet-500
-        'secondary-50': '#F5F3FF',
-        'secondary-100': '#EDE9FE',
-        'secondary-200': '#DDD6FE',
-        'secondary-500': '#8B5CF6',
-        'secondary-700': '#6D28D9',
-        'secondary-900': '#4C1D95',
+        // Secondary - Cool Cyan/Blue
+        'secondary': '#0EA5E9',
+        'secondary-50': '#F0F9FF',
+        'secondary-100': '#E0F2FE',
+        'secondary-200': '#BAE6FD',
+        'secondary-500': '#0EA5E9',
+        'secondary-700': '#0369A1',
+        'secondary-900': '#0C4A6E',
 
-        // Accent - Warm Amber
-        'accent': '#F59E0B', // Amber-500
+        // Accent - Warm Amber (for subtle highlights if needed)
+        'accent': '#F59E0B',
         'accent-50': '#FFFBEB',
         'accent-100': '#FEF3C7',
         'accent-200': '#FDE68A',
@@ -36,15 +36,15 @@ module.exports = {
         'accent-700': '#B45309',
         'accent-900': '#78350F',
 
-        // Neutrals & Backgrounds
-        'background': '#F3F4F6', // Cool Gray 100
-        'surface': '#FFFFFF',
-        'surface-hover': '#F9FAFB',
+        // Neutrals & Backgrounds - Zoviz Clean Light Theme
+        'background': '#F9FAFB', // Off-white
+        'surface': '#FFFFFF',    // Pure White
+        'surface-hover': '#F3F4F6',
 
-        // Text
-        'text-primary': '#111827', // Gray 900
-        'text-secondary': '#4B5563', // Gray 600
-        'text-muted': '#9CA3AF', // Gray 400
+        // Text - Zoviz high contrast
+        'text-primary': '#111827',   // Navy/Black for headings
+        'text-secondary': '#4B5563', // Slate Gray for body
+        'text-muted': '#9CA3AF',     // Light Gray
         'text-inverted': '#FFFFFF',
 
         // Status
