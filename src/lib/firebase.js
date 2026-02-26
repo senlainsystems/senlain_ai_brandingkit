@@ -13,10 +13,24 @@ const firebaseConfig = {
     measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
+console.log("firebase.js: Initializing Firebase with config...");
 const app = initializeApp(firebaseConfig);
+console.log("firebase.js: Firebase app initialized.");
+
 export const auth = getAuth(app);
+console.log("firebase.js: Auth local instance created.");
+
 export const db = getFirestore(app);
-export const analytics = getAnalytics(app);
+console.log("firebase.js: Firestore local instance created.");
+
+let analytics;
+try {
+    analytics = getAnalytics(app);
+    console.log("firebase.js: Analytics initialized.");
+} catch (e) {
+    console.warn("firebase.js: Analytics failed to initialize (expected in some environments):", e.message);
+}
+export { analytics };
 
 // Connect to emulators if enabled in .env
 if (import.meta.env.VITE_USE_FIREBASE_EMULATOR === 'true') {
