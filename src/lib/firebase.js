@@ -13,22 +13,25 @@ const firebaseConfig = {
     measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
-console.log("firebase.js: Initializing Firebase with config...");
+console.log("firebase.js: Initializing Firebase with config (apiKey exists:", !!firebaseConfig.apiKey, ")...");
 const app = initializeApp(firebaseConfig);
 console.log("firebase.js: Firebase app initialized.");
 
+console.log("firebase.js: Attempting getAuth...");
 export const auth = getAuth(app);
 console.log("firebase.js: Auth local instance created.");
 
+console.log("firebase.js: Attempting getFirestore...");
 export const db = getFirestore(app);
 console.log("firebase.js: Firestore local instance created.");
 
 let analytics;
 try {
+    console.log("firebase.js: Attempting getAnalytics...");
     analytics = getAnalytics(app);
     console.log("firebase.js: Analytics initialized.");
 } catch (e) {
-    console.warn("firebase.js: Analytics failed to initialize (expected in some environments):", e.message);
+    console.warn("firebase.js: Analytics failed to initialize:", e.message);
 }
 export { analytics };
 
