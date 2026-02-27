@@ -268,7 +268,23 @@ const AIGenerationInterface = () => {
       updateBrandBrief('visualPreferences', { colorPalette: identityResult.colorPalette });
 
       addLog('Visual identity defined', 'success', 'colorPalette');
-      setGenerationProgress(prev => ({ ...prev, colorPalette: 100, logo: 100, overall: 100 })); // Assuming logo is part of identity for now
+      setGenerationProgress(prev => ({ ...prev, colorPalette: 100, overall: 75 }));
+
+      // 4. Generate Logo
+      addLog('Designing custom logo using Imagen 3...', 'info', 'logo');
+      const logoResult = await genkitApi.generateLogo({
+        brandName: currentBrandName,
+        industry: industry || 'Technology',
+        description: brandBrief.basicInfo.businessDescription || '',
+        colors: identityResult.colorPalette,
+        style: identityResult.visualStyle
+      });
+
+      updateBrandBrief('generatedAssets', {
+        logoUrl: logoResult.imageUrl
+      });
+      addLog('Logo generation complete', 'success', 'logo');
+      setGenerationProgress(prev => ({ ...prev, logo: 100, overall: 100 }));
 
       setGenerationStatus('completed');
       addLog('All assets generated successfully!', 'success', 'system');

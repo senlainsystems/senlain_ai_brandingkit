@@ -4,6 +4,7 @@ import Header from 'components/ui/Header';
 import BreadcrumbNavigation from 'components/ui/BreadcrumbNavigation';
 import QuickActionsMenu from 'components/ui/QuickActionsMenu';
 import Icon from 'components/AppIcon';
+import { useBrandContext } from 'context/BrandContext';
 
 
 // Components
@@ -20,7 +21,9 @@ import ExportModal from './components/ExportModal';
 const BrandKitPreviewEditor = () => {
   const navigate = useNavigate();
   const canvasRef = useRef(null);
-  
+  const { brandBrief } = useBrandContext();
+  const { basicInfo, generatedAssets } = brandBrief;
+
   // State management
   const [activeTab, setActiveTab] = useState('logo');
   const [selectedAsset, setSelectedAsset] = useState('primary-logo');
@@ -32,56 +35,49 @@ const BrandKitPreviewEditor = () => {
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [userTier, setUserTier] = useState('Pro');
 
-  // Mock brand data
+  // Map brandBrief to the structure expected by components
   const brandData = {
-    id: 'brand-001',
-    name: 'TechFlow Solutions',
-    industry: 'Technology',
-    createdAt: '2024-01-15',
-    lastModified: '2024-01-20',
+    id: 'brand-current',
+    name: basicInfo.businessName || 'Your Brand',
+    industry: basicInfo.industry || 'General',
+    createdAt: new Date().toISOString(),
+    lastModified: new Date().toISOString(),
+    mission: generatedAssets.mission || '',
+    values: generatedAssets.values || [],
     assets: {
       logos: [
         {
           id: 'primary-logo',
           name: 'Primary Logo',
-          type: 'svg',
-          url: 'https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=400&h=400&fit=crop',
-          variations: ['horizontal', 'vertical', 'icon-only', 'monochrome']
-        },
-        {
-          id: 'secondary-logo',
-          name: 'Secondary Logo',
-          type: 'svg',
-          url: 'https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=400&h=400&fit=crop',
-          variations: ['light', 'dark', 'transparent']
+          type: 'image',
+          url: generatedAssets.logoUrl || 'https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=400&h=400&fit=crop',
+          variations: ['modern', 'minimal']
         }
       ],
       colors: {
-        primary: '#1E40AF',
-        secondary: '#7C3AED',
-        accent: '#F59E0B',
+        primary: generatedAssets.colors?.[0] || '#1E40AF',
+        secondary: generatedAssets.colors?.[1] || '#7C3AED',
+        accent: generatedAssets.colors?.[2] || '#F59E0B',
         neutral: '#6B7280',
-        palette: [
-          { name: 'Primary Blue', hex: '#1E40AF', rgb: 'rgb(30, 64, 175)', usage: 'Primary brand color for logos and CTAs' },
-          { name: 'Secondary Purple', hex: '#7C3AED', rgb: 'rgb(124, 58, 237)', usage: 'Secondary elements and highlights' },
-          { name: 'Accent Amber', hex: '#F59E0B', rgb: 'rgb(245, 158, 11)', usage: 'Accent color for warnings and highlights' },
-          { name: 'Neutral Gray', hex: '#6B7280', rgb: 'rgb(107, 114, 128)', usage: 'Text and neutral elements' },
-          { name: 'Light Gray', hex: '#F3F4F6', rgb: 'rgb(243, 244, 246)', usage: 'Backgrounds and subtle elements' },
-          { name: 'Dark Gray', hex: '#111827', rgb: 'rgb(17, 24, 39)', usage: 'Primary text and dark elements' }
-        ]
+        palette: (generatedAssets.colors || []).map((hex, i) => ({
+          name: `Color ${i + 1}`,
+          hex,
+          rgb: hex, // Simple hex to rgb placeholder
+          usage: i === 0 ? 'Primary brand color' : i === 1 ? 'Secondary color' : 'Accent color'
+        }))
       },
       typography: {
         primary: {
-          name: 'Inter',
+          name: generatedAssets.typography || 'Inter',
           category: 'Sans-serif',
-          weights: ['400', '500', '600', '700'],
+          weights: ['400', '700'],
           usage: 'Headlines and primary text'
         },
         secondary: {
-          name: 'JetBrains Mono',
-          category: 'Monospace',
+          name: 'Inter',
+          category: 'Sans-serif',
           weights: ['400'],
-          usage: 'Code and technical content'
+          usage: 'Secondary content'
         }
       }
     }
@@ -191,11 +187,11 @@ const BrandKitPreviewEditor = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      
+
       <main className="pt-16">
         <div className="px-6 py-6">
           <BreadcrumbNavigation />
-          
+
           {/* Page Header */}
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center space-x-4">
@@ -205,7 +201,7 @@ const BrandKitPreviewEditor = () => {
               >
                 <Icon name="ArrowLeft" size={20} />
               </button>
-              
+
               <div>
                 <h1 className="text-2xl font-semibold text-text-primary">
                   {brandData.name}
@@ -218,7 +214,7 @@ const BrandKitPreviewEditor = () => {
                 </p>
               </div>
             </div>
-            
+
             <div className="flex items-center space-x-3">
               {/* Action Buttons */}
               <button
@@ -228,7 +224,7 @@ const BrandKitPreviewEditor = () => {
                 <Icon name="History" size={16} />
                 <span>Versions</span>
               </button>
-              
+
               <button
                 onClick={handleCollaboration}
                 className="px-4 py-2 text-sm font-medium text-text-secondary hover:text-primary hover:bg-primary-50 rounded-md transition-colors duration-200 flex items-center space-x-2"
@@ -236,19 +232,18 @@ const BrandKitPreviewEditor = () => {
                 <Icon name="Users" size={16} />
                 <span>Collaborate</span>
               </button>
-              
+
               <button
                 onClick={handleSave}
                 disabled={!hasUnsavedChanges}
-                className={`px-4 py-2 text-sm font-medium rounded-md transition-colors duration-200 flex items-center space-x-2 ${
-                  hasUnsavedChanges
-                    ? 'bg-success text-white hover:bg-success-600' :'text-text-muted bg-gray-100 cursor-not-allowed'
-                }`}
+                className={`px-4 py-2 text-sm font-medium rounded-md transition-colors duration-200 flex items-center space-x-2 ${hasUnsavedChanges
+                  ? 'bg-success text-white hover:bg-success-600' : 'text-text-muted bg-gray-100 cursor-not-allowed'
+                  }`}
               >
                 <Icon name="Save" size={16} />
                 <span>Save</span>
               </button>
-              
+
               <button
                 onClick={handleExport}
                 className="btn-primary px-4 py-2 rounded-md text-sm font-medium flex items-center space-x-2"
@@ -266,10 +261,9 @@ const BrandKitPreviewEditor = () => {
                 <button
                   key={tab.id}
                   onClick={() => handleTabChange(tab.id)}
-                  className={`flex items-center space-x-2 py-3 px-1 border-b-2 font-medium text-sm transition-colors duration-200 ${
-                    activeTab === tab.id
-                      ? 'border-primary text-primary' :'border-transparent text-text-secondary hover:text-primary hover:border-gray-300'
-                  }`}
+                  className={`flex items-center space-x-2 py-3 px-1 border-b-2 font-medium text-sm transition-colors duration-200 ${activeTab === tab.id
+                    ? 'border-primary text-primary' : 'border-transparent text-text-secondary hover:text-primary hover:border-gray-300'
+                    }`}
                 >
                   <Icon name={tab.icon} size={16} />
                   <span>{tab.label}</span>

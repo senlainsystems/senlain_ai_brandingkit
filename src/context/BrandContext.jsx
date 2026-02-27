@@ -44,6 +44,17 @@ export const BrandProvider = ({ children }) => {
         professional: 9,
         creative: 7
       }
+    },
+    generatedAssets: {
+      names: [],
+      nameRationale: '',
+      taglines: [],
+      mission: '',
+      values: [],
+      colors: [],
+      typography: '',
+      visualStyle: '',
+      logoUrl: ''
     }
   });
 

@@ -37,4 +37,7 @@ export const genkitApi = {
 
     // Generate full brand identity (colors, fonts, style)
     generateBrandIdentity: (data) => callGenkitFlow('generateBrandIdentity', data),
+
+    // Generate logo using AI
+    generateLogo: (data) => callGenkitFlow('generateLogo', data),
 };

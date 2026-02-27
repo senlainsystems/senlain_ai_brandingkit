@@ -1,11 +1,10 @@
-import { defineFlow } from "@genkit-ai/flow";
-import { geminiPro } from "@genkit-ai/googleai";
-import { generate } from "@genkit-ai/ai";
-import * as z from "zod";
-
+import { gemini15Flash } from "@genkit-ai/googleai";
+import { imagen3 } from "@genkit-ai/vertexai";
+import { z } from "genkit";
+import { ai } from "../genkit";
 
 // Flow 1: Generate Brand Names
-export const generateBrandNames = defineFlow(
+export const generateBrandNames = ai.defineFlow(
     {
         name: "generateBrandNames",
         inputSchema: z.object({
@@ -30,8 +29,8 @@ export const generateBrandNames = defineFlow(
       2. 'rationale': A brief explanation of the naming strategy.
     `;
 
-        const result = await generate({
-            model: geminiPro,
+        const result = await ai.generate({
+            model: gemini15Flash,
             prompt: prompt,
             output: {
                 format: "json",
@@ -43,7 +42,7 @@ export const generateBrandNames = defineFlow(
 );
 
 // Flow 2: Generate Taglines
-export const generateTagline = defineFlow(
+export const generateTagline = ai.defineFlow(
     {
         name: "generateTagline",
         inputSchema: z.object({
@@ -63,8 +62,8 @@ export const generateTagline = defineFlow(
       Return JSON with 'taglines' array.
     `;
 
-        const result = await generate({
-            model: geminiPro,
+        const result = await ai.generate({
+            model: gemini15Flash,
             prompt: prompt,
             output: {
                 format: "json",
@@ -76,7 +75,7 @@ export const generateTagline = defineFlow(
 );
 
 // Flow 3: Generate Full Brand Identity
-export const generateBrandIdentity = defineFlow(
+export const generateBrandIdentity = ai.defineFlow(
     {
         name: "generateBrandIdentity",
         inputSchema: z.object({
@@ -105,8 +104,8 @@ export const generateBrandIdentity = defineFlow(
       - visualStyle (string describing the look and feel)
     `;
 
-        const result = await generate({
-            model: geminiPro,
+        const result = await ai.generate({
+            model: gemini15Flash,
             prompt: prompt,
             output: {
                 format: "json",
@@ -114,5 +113,46 @@ export const generateBrandIdentity = defineFlow(
         });
 
         return result.output();
+    }
+);
+
+// Flow 4: Generate Logo
+export const generateLogo = ai.defineFlow(
+    {
+        name: "generateLogo",
+        inputSchema: z.object({
+            brandName: z.string(),
+            industry: z.string(),
+            description: z.string(),
+            colors: z.array(z.string()).optional(),
+            style: z.string().optional(),
+        }),
+        outputSchema: z.object({
+            imageUrl: z.string(),
+        }),
+    },
+    async (input) => {
+        const prompt = `
+      Professional, clean, and modern minimalist logo for a brand named "${input.brandName}".
+      Industry: ${input.industry}
+      Description: ${input.description}
+      Color Palette: ${input.colors?.join(", ") || "Professional colors"}
+      Style: ${input.style || "Modern Minimalist"}
+
+      The logo should be suitable for a premium brand, with high contrast and clear shapes.
+      Avoid cluttered designs. High resolution, white background.
+    `;
+
+        const result = await ai.generate({
+            model: imagen3,
+            prompt: prompt,
+        });
+
+        const media = result.media;
+        if (media) {
+            return { imageUrl: media.url };
+        }
+
+        return { imageUrl: "" };
     }
 );
