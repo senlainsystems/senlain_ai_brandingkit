@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Icon from 'components/AppIcon';
 
 const BasicInformationStep = ({ data, onUpdate }) => {
-  const [isCheckingAvailability, setIsCheckingAvailability] = useState(false);
   const [characterCount, setCharacterCount] = useState(data.businessDescription?.length || 0);
 
   const industries = [
@@ -15,23 +14,9 @@ const BasicInformationStep = ({ data, onUpdate }) => {
 
   const popularIndustries = ['Technology & Software', 'E-commerce & Retail', 'Healthcare & Medical', 'Finance & Banking'];
 
-  useEffect(() => {
-    if (data.businessName && data.businessName.length > 2) {
-      setIsCheckingAvailability(true);
-      const timer = setTimeout(() => {
-        // Mock availability check
-        const isAvailable = Math.random() > 0.3; // 70% chance of being available
-        onUpdate({ isNameAvailable: isAvailable });
-        setIsCheckingAvailability(false);
-      }, 1500);
-
-      return () => clearTimeout(timer);
-    }
-  }, [data.businessName, onUpdate]);
-
   const handleBusinessNameChange = (e) => {
     const value = e.target.value;
-    onUpdate({ businessName: value, isNameAvailable: null });
+    onUpdate({ businessName: value });
   };
 
   const handleIndustryChange = (industry) => {
@@ -64,36 +49,10 @@ const BasicInformationStep = ({ data, onUpdate }) => {
             value={data.businessName || ''}
             onChange={handleBusinessNameChange}
             placeholder="Enter your business name"
-            className="input-field w-full pr-12"
+            className="input-field w-full"
             required
           />
-          
-          {/* Availability Status */}
-          <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-            {isCheckingAvailability && (
-              <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
-            )}
-            {!isCheckingAvailability && data.isNameAvailable === true && (
-              <Icon name="CheckCircle" size={20} className="text-success" />
-            )}
-            {!isCheckingAvailability && data.isNameAvailable === false && (
-              <Icon name="XCircle" size={20} className="text-error" />
-            )}
-          </div>
         </div>
-        
-        {data.isNameAvailable === true && (
-          <p className="text-sm text-success flex items-center space-x-1">
-            <Icon name="Check" size={14} />
-            <span>Great! This name appears to be available</span>
-          </p>
-        )}
-        {data.isNameAvailable === false && (
-          <p className="text-sm text-error flex items-center space-x-1">
-            <Icon name="AlertTriangle" size={14} />
-            <span>This name might already be in use. Consider variations.</span>
-          </p>
-        )}
       </div>
 
       {/* Industry Selection */}
@@ -101,7 +60,7 @@ const BasicInformationStep = ({ data, onUpdate }) => {
         <label className="block text-sm font-medium text-text-primary">
           Industry *
         </label>
-        
+
         {/* Popular Industries */}
         <div className="mb-4">
           <p className="text-xs text-text-secondary mb-2">Popular choices:</p>
@@ -110,10 +69,9 @@ const BasicInformationStep = ({ data, onUpdate }) => {
               <button
                 key={industry}
                 onClick={() => handleIndustryChange(industry)}
-                className={`px-3 py-2 text-sm rounded-lg border transition-all duration-200 ${
-                  data.industry === industry
-                    ? 'border-primary bg-primary-50 text-primary' :'border-border bg-background text-text-secondary hover:bg-surface'
-                }`}
+                className={`px-3 py-2 text-sm rounded-lg border transition-all duration-200 ${data.industry === industry
+                    ? 'border-primary bg-primary-50 text-primary' : 'border-border bg-background text-text-secondary hover:bg-surface'
+                  }`}
               >
                 {industry}
               </button>
@@ -136,10 +94,10 @@ const BasicInformationStep = ({ data, onUpdate }) => {
               </option>
             ))}
           </select>
-          <Icon 
-            name="ChevronDown" 
-            size={16} 
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-text-muted pointer-events-none" 
+          <Icon
+            name="ChevronDown"
+            size={16}
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-text-muted pointer-events-none"
           />
         </div>
       </div>

@@ -11,62 +11,9 @@ const SecurityTab = () => {
     confirmPassword: ''
   });
 
-  const activeSessions = [
-    {
-      id: 1,
-      device: 'MacBook Pro',
-      browser: 'Chrome 121.0',
-      location: 'San Francisco, CA',
-      ipAddress: '192.168.1.100',
-      lastActive: '2024-02-20T10:30:00Z',
-      isCurrent: true
-    },
-    {
-      id: 2,
-      device: 'iPhone 15 Pro',
-      browser: 'Safari Mobile',
-      location: 'San Francisco, CA',
-      ipAddress: '192.168.1.101',
-      lastActive: '2024-02-19T15:45:00Z',
-      isCurrent: false
-    },
-    {
-      id: 3,
-      device: 'iPad Air',
-      browser: 'Safari',
-      location: 'San Francisco, CA',
-      ipAddress: '192.168.1.102',
-      lastActive: '2024-02-18T09:20:00Z',
-      isCurrent: false
-    }
-  ];
-
-  const securityEvents = [
-    {
-      id: 1,
-      type: 'login',
-      description: 'Successful login from Chrome on MacBook Pro',
-      timestamp: '2024-02-20T10:30:00Z',
-      location: 'San Francisco, CA',
-      status: 'success'
-    },
-    {
-      id: 2,
-      type: 'password_change',
-      description: 'Password changed successfully',
-      timestamp: '2024-02-15T14:20:00Z',
-      location: 'San Francisco, CA',
-      status: 'success'
-    },
-    {
-      id: 3,
-      type: 'failed_login',
-      description: 'Failed login attempt',
-      timestamp: '2024-02-10T08:15:00Z',
-      location: 'Unknown Location',
-      status: 'warning'
-    }
-  ];
+  // Security data removed for production readiness
+  const activeSessions = [];
+  const securityEvents = [];
 
   const getPasswordStrength = (password) => {
     if (password.length === 0) return { strength: 0, label: '', color: '' };
@@ -184,12 +131,11 @@ const SecurityTab = () => {
                       </span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-1">
-                      <div 
-                        className={`h-1 rounded-full transition-all duration-300 ${
-                          passwordStrength.strength <= 25 ? 'bg-error' :
+                      <div
+                        className={`h-1 rounded-full transition-all duration-300 ${passwordStrength.strength <= 25 ? 'bg-error' :
                           passwordStrength.strength <= 50 ? 'bg-warning' :
-                          passwordStrength.strength <= 75 ? 'bg-accent' : 'bg-success'
-                        }`}
+                            passwordStrength.strength <= 75 ? 'bg-accent' : 'bg-success'
+                          }`}
                         style={{ width: `${passwordStrength.strength}%` }}
                       ></div>
                     </div>
@@ -238,21 +184,19 @@ const SecurityTab = () => {
               Add an extra layer of security to your account
             </p>
           </div>
-          
+
           <div className="flex items-center space-x-3">
-            <span className={`px-2 py-1 rounded-full text-xs font-medium border ${
-              twoFactorEnabled 
-                ? 'text-success bg-success-50 border-success-200' :'text-warning bg-warning-50 border-warning-200'
-            }`}>
+            <span className={`px-2 py-1 rounded-full text-xs font-medium border ${twoFactorEnabled
+              ? 'text-success bg-success-50 border-success-200' : 'text-warning bg-warning-50 border-warning-200'
+              }`}>
               {twoFactorEnabled ? 'Enabled' : 'Disabled'}
             </span>
-            
+
             <button
               onClick={() => twoFactorEnabled ? setTwoFactorEnabled(false) : setShow2FASetup(true)}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors duration-200 ${
-                twoFactorEnabled
-                  ? 'bg-error text-white hover:bg-error-600' :'btn-primary'
-              }`}
+              className={`px-4 py-2 rounded-lg font-medium transition-colors duration-200 ${twoFactorEnabled
+                ? 'bg-error text-white hover:bg-error-600' : 'btn-primary'
+                }`}
             >
               {twoFactorEnabled ? 'Disable 2FA' : 'Enable 2FA'}
             </button>
@@ -275,16 +219,26 @@ const SecurityTab = () => {
       {/* Active Sessions */}
       <div className="bg-surface border border-border rounded-lg p-6">
         <h3 className="text-lg font-semibold text-text-primary mb-6">Active Sessions</h3>
-        
+
         <div className="space-y-4">
-          {activeSessions.map((session) => (
+          {activeSessions.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-10 text-center">
+              <div className="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center mb-3">
+                <Icon name="Monitor" size={24} className="text-text-muted" />
+              </div>
+              <h4 className="text-sm font-medium text-text-primary mb-1">No active sessions</h4>
+              <p className="text-xs text-text-secondary max-w-[200px]">
+                Your current session will appear here when you sign in.
+              </p>
+            </div>
+          ) : activeSessions.map((session) => (
             <div key={session.id} className="border border-border rounded-lg p-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
                   <div className="w-10 h-10 bg-primary-50 rounded-lg flex items-center justify-center">
                     <Icon name={getDeviceIcon(session.device)} size={20} className="text-primary" />
                   </div>
-                  
+
                   <div>
                     <div className="flex items-center space-x-2">
                       <h4 className="font-medium text-text-primary">{session.device}</h4>
@@ -322,21 +276,30 @@ const SecurityTab = () => {
       {/* Security Events */}
       <div className="bg-surface border border-border rounded-lg p-6">
         <h3 className="text-lg font-semibold text-text-primary mb-6">Recent Security Events</h3>
-        
+
         <div className="space-y-4">
-          {securityEvents.map((event) => (
+          {securityEvents.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-10 text-center">
+              <div className="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center mb-3">
+                <Icon name="ShieldAlert" size={24} className="text-text-muted" />
+              </div>
+              <h4 className="text-sm font-medium text-text-primary mb-1">No security events</h4>
+              <p className="text-xs text-text-secondary max-w-[200px]">
+                Recent security-related activity will be logged here.
+              </p>
+            </div>
+          ) : securityEvents.map((event) => (
             <div key={event.id} className="flex items-center space-x-4 py-3 border-b border-border last:border-b-0">
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                event.status === 'success' ? 'bg-success-50' :
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${event.status === 'success' ? 'bg-success-50' :
                 event.status === 'warning' ? 'bg-warning-50' : 'bg-error-50'
-              }`}>
-                <Icon 
-                  name={getEventIcon(event.type)} 
-                  size={16} 
-                  className={getEventColor(event.status)} 
+                }`}>
+                <Icon
+                  name={getEventIcon(event.type)}
+                  size={16}
+                  className={getEventColor(event.status)}
                 />
               </div>
-              
+
               <div className="flex-1">
                 <p className="text-sm font-medium text-text-primary">{event.description}</p>
                 <div className="flex items-center space-x-4 mt-1 text-xs text-text-muted">

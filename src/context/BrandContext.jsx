@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState } from 'react';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { db } from 'lib/firebase';
 import { useAuth } from './AuthContext';
 
@@ -58,6 +58,7 @@ export const BrandProvider = ({ children }) => {
     }
   });
 
+  const [currentBrandId, setCurrentBrandId] = useState(null);
   const { currentUser } = useAuth();
 
   const updateBrandBrief = (section, data) => {
@@ -79,16 +80,45 @@ export const BrandProvider = ({ children }) => {
   const saveToFirestore = async (data) => {
     if (!currentUser) return;
     try {
-      await setDoc(doc(db, "brand_briefs", currentUser.uid), {
+      const brandData = {
         ...data,
+        userId: currentUser.uid,
         updatedAt: new Date()
-      }, { merge: true });
+      };
+
+      if (currentBrandId) {
+        await setDoc(doc(db, "brand_kits", currentBrandId), brandData, { merge: true });
+      } else {
+        // If no ID, we might want to create one or wait for explicit save
+        // For now, let's just use doc(db, "brand_kits", currentUser.uid) as a fallback 
+        // OR better, don't auto-save if no ID yet (first creation)
+        console.log("No currentBrandId, skipping auto-save to collection.");
+      }
     } catch (error) {
-      console.error("Error saving brand brief:", error);
+      console.error("Error saving brand kit:", error);
+    }
+  };
+
+  const loadBrandKit = async (brandId) => {
+    if (!currentUser) return;
+    try {
+      const docRef = doc(db, "brand_kits", brandId);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        // Convert Firestore timestamps to Dates if needed
+        setBrandBrief(data);
+        setCurrentBrandId(brandId);
+        return data;
+      }
+    } catch (error) {
+      console.error("Error loading brand kit:", error);
     }
   };
 
   const resetBrandBrief = () => {
+    setCurrentBrandId(null);
     setBrandBrief({
       basicInfo: {
         businessName: '',
@@ -125,9 +155,13 @@ export const BrandProvider = ({ children }) => {
 
   const value = {
     brandBrief,
+    setBrandBrief,
     updateBrandBrief,
     resetBrandBrief,
-    saveToFirestore
+    saveToFirestore,
+    currentBrandId,
+    setCurrentBrandId,
+    loadBrandKit
   };
 
   return (

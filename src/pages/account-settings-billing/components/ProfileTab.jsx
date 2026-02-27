@@ -1,20 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Icon from 'components/AppIcon';
 import Image from 'components/AppImage';
+import { useAuth } from 'context/AuthContext';
 
 const ProfileTab = () => {
+  const { currentUser } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
   const [profileData, setProfileData] = useState({
-    firstName: 'Sarah',
-    lastName: 'Johnson',
-    email: 'sarah.johnson@example.com',
-    phone: '+1 (555) 123-4567',
-    company: 'Creative Studio Inc.',
-    jobTitle: 'Brand Director',
-    bio: `I'm a passionate brand strategist with over 8 years of experience helping businesses create compelling visual identities. I specialize in working with startups and growing companies to develop brands that resonate with their target audiences and drive business growth.`,location: 'San Francisco, CA',website: 'https://sarahjohnson.design',avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face'
+    firstName: currentUser?.displayName?.split(' ')[0] || '',
+    lastName: currentUser?.displayName?.split(' ')[1] || '',
+    email: currentUser?.email || '',
+    phone: '',
+    company: '',
+    jobTitle: '',
+    bio: '',
+    location: '',
+    website: '',
+    avatar: currentUser?.photoURL || 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=150&h=150&fit=crop&crop=face'
   });
+
+  // Sync profile data with currentUser if it changes
+  useEffect(() => {
+    if (currentUser) {
+      setProfileData(prev => ({
+        ...prev,
+        firstName: currentUser.displayName?.split(' ')[0] || prev.firstName,
+        lastName: currentUser.displayName?.split(' ')[1] || prev.lastName,
+        email: currentUser.email || prev.email,
+        avatar: currentUser.photoURL || prev.avatar
+      }));
+    }
+  }, [currentUser]);
 
   const [notifications, setNotifications] = useState({
     emailMarketing: true,
@@ -85,7 +103,7 @@ const ProfileTab = () => {
               </label>
             )}
           </div>
-          
+
           <div>
             <h2 className="text-2xl font-bold text-text-primary">
               {profileData.firstName} {profileData.lastName}
@@ -97,10 +115,9 @@ const ProfileTab = () => {
 
         <button
           onClick={() => isEditing ? handleSave() : setIsEditing(true)}
-          className={`px-4 py-2 rounded-lg font-medium transition-colors duration-200 ${
-            isEditing
-              ? 'bg-success text-white hover:bg-success-600' :'bg-primary text-white hover:bg-primary-600'
-          }`}
+          className={`px-4 py-2 rounded-lg font-medium transition-colors duration-200 ${isEditing
+              ? 'bg-success text-white hover:bg-success-600' : 'bg-primary text-white hover:bg-primary-600'
+            }`}
         >
           {isEditing ? 'Save Changes' : 'Edit Profile'}
         </button>
@@ -109,7 +126,7 @@ const ProfileTab = () => {
       {/* Personal Information */}
       <div className="bg-surface border border-border rounded-lg p-6">
         <h3 className="text-lg font-semibold text-text-primary mb-6">Personal Information</h3>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-text-primary mb-2">
@@ -234,7 +251,7 @@ const ProfileTab = () => {
       {/* Notification Preferences */}
       <div className="bg-surface border border-border rounded-lg p-6">
         <h3 className="text-lg font-semibold text-text-primary mb-6">Notification Preferences</h3>
-        
+
         <div className="space-y-4">
           {[
             { key: 'emailMarketing', label: 'Marketing emails', description: 'Receive updates about new features and promotions' },
@@ -251,17 +268,15 @@ const ProfileTab = () => {
                 </div>
                 <p className="text-xs text-text-muted mt-1">{item.description}</p>
               </div>
-              
+
               <button
                 onClick={() => handleNotificationChange(item.key)}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 ${
-                  notifications[item.key] ? 'bg-primary' : 'bg-gray-200'
-                }`}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 ${notifications[item.key] ? 'bg-primary' : 'bg-gray-200'
+                  }`}
               >
                 <span
-                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 ${
-                    notifications[item.key] ? 'translate-x-6' : 'translate-x-1'
-                  }`}
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 ${notifications[item.key] ? 'translate-x-6' : 'translate-x-1'
+                    }`}
                 />
               </button>
             </div>

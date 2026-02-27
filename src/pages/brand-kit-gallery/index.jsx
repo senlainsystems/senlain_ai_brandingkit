@@ -10,6 +10,9 @@ import { SkeletonCard } from 'components/ui/Skeleton';
 import { useToast } from 'components/ui/ToastProvider';
 import { useLocalStorage } from 'hooks/useLocalStorage';
 import { useDebounce } from 'hooks/useDebounce';
+import { db } from 'lib/firebase';
+import { collection, query, where, getDocs } from 'firebase/firestore';
+import { useAuth } from 'context/AuthContext';
 
 import FilterSidebar from './components/FilterSidebar';
 import BrandKitCard from './components/BrandKitCard';
@@ -20,6 +23,7 @@ import EmptyState from './components/EmptyState';
 const BrandKitGallery = () => {
   const navigate = useNavigate();
   const toast = useToast();
+  const { currentUser } = useAuth();
   const [viewMode, setViewMode] = useLocalStorage('gallery-view-mode', 'grid');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useLocalStorage('gallery-sort-by', 'newest');
@@ -33,70 +37,52 @@ const BrandKitGallery = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [showBulkActions, setShowBulkActions] = useState(false);
   const [brandKits, setBrandKits] = useState([]);
-  const [hasMore, setHasMore] = useState(true);
+  const [hasMore, setHasMore] = useState(false);
   const [page, setPage] = useState(1);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
-  // Mock brand kits data with more items for infinite scroll
-  const generateMockBrandKits = (startId = 1, count = 20) => {
-    const industries = ['Technology', 'Food & Beverage', 'Health & Fitness', 'Fashion', 'Marketing', 'Finance'];
-    const statuses = ['complete', 'draft', 'archived'];
-    const tiers = ['hobby', 'pro', 'agency'];
-
-    return Array.from({ length: count }, (_, index) => {
-      const id = startId + index;
-      return {
-        id: `brand-${id.toString().padStart(3, '0')}`,
-        name: `Brand ${id}`,
-        thumbnail: `https://images.unsplash.com/photo-${1600000000000 + id}?w=400&h=300&fit=crop`,
-        industry: industries[Math.floor(Math.random() * industries.length)],
-        status: statuses[Math.floor(Math.random() * statuses.length)],
-        createdAt: new Date(Date.now() - Math.random() * 365 * 24 * 60 * 60 * 1000),
-        lastModified: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000),
-        colors: ['#1E40AF', '#7C3AED', '#F59E0B'].slice(0, Math.floor(Math.random() * 3) + 1),
-        tags: ['modern', 'professional', 'creative'].slice(0, Math.floor(Math.random() * 3) + 1),
-        tier: tiers[Math.floor(Math.random() * tiers.length)],
-        assets: {
-          logos: Math.floor(Math.random() * 8) + 1,
-          colors: Math.floor(Math.random() * 10) + 3,
-          fonts: Math.floor(Math.random() * 5) + 1,
-          guidelines: Math.floor(Math.random() * 2) + 1
-        }
-      };
-    });
-  };
-
-  // Simulate API loading
+  // Load real data from Firestore
   useEffect(() => {
+    if (!currentUser) {
+      setIsLoading(false);
+      return;
+    }
+
     const loadInitialData = async () => {
       setIsLoading(true);
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setBrandKits(generateMockBrandKits(1, 20));
-      setIsLoading(false);
+      try {
+        const q = query(
+          collection(db, "brand_kits"),
+          where("userId", "==", currentUser.uid)
+        );
+
+        const querySnapshot = await getDocs(q);
+        const kits = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+          // Ensure dates are JavaScript Date objects
+          createdAt: doc.data().createdAt?.toDate() || new Date(),
+          lastModified: doc.data().lastModified?.toDate() || new Date()
+        }));
+
+        setBrandKits(kits);
+        setHasMore(false); // Pagination not implemented yet for Firestore
+      } catch (error) {
+        console.error("Error loading brand kits:", error);
+        toast.error("Failed to load your brand kits");
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     loadInitialData();
-  }, []);
+  }, [currentUser, toast]);
 
-  // Load more data for infinite scroll
+  // Load more data - stubbed for now since we're using simple getDocs
   const loadMore = async () => {
-    if (isLoadingMore || !hasMore) return;
-
-    setIsLoadingMore(true);
-    await new Promise(resolve => setTimeout(resolve, 1000));
-
-    const newItems = generateMockBrandKits((page * 20) + 1, 20);
-    setBrandKits(prev => [...prev, ...newItems]);
-    setPage(prev => prev + 1);
-
-    // Simulate end of data after 100 items
-    if (page >= 4) {
-      setHasMore(false);
-    }
-
-    setIsLoadingMore(false);
+    // Implementation for pagination would go here if needed
   };
 
   // Filter and sort brand kits

@@ -1,10 +1,11 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Header from 'components/ui/Header';
 import BreadcrumbNavigation from 'components/ui/BreadcrumbNavigation';
 import QuickActionsMenu from 'components/ui/QuickActionsMenu';
 import Icon from 'components/AppIcon';
 import { useBrandContext } from 'context/BrandContext';
+import { useToast } from 'components/ui/ToastProvider';
 
 
 // Components
@@ -20,9 +21,19 @@ import ExportModal from './components/ExportModal';
 
 const BrandKitPreviewEditor = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const toast = useToast();
   const canvasRef = useRef(null);
-  const { brandBrief } = useBrandContext();
-  const { basicInfo, generatedAssets } = brandBrief;
+  const { brandBrief, loadBrandKit, currentBrandId, saveToFirestore } = useBrandContext();
+  const { basicInfo, generatedAssets, visualPreferences } = brandBrief;
+  const brandIdFromState = location.state?.brandId;
+
+  // Load brand kit if ID is provided
+  useEffect(() => {
+    if (brandIdFromState && brandIdFromState !== currentBrandId) {
+      loadBrandKit(brandIdFromState);
+    }
+  }, [brandIdFromState, currentBrandId, loadBrandKit]);
 
   // State management
   const [activeTab, setActiveTab] = useState('logo');
@@ -36,30 +47,31 @@ const BrandKitPreviewEditor = () => {
   const [userTier, setUserTier] = useState('Pro');
 
   // Map brandBrief to the structure expected by components
-  const brandData = {
-    id: 'brand-current',
+  const brandData = useMemo(() => ({
+    id: brandIdFromState || 'current',
     name: basicInfo.businessName || 'Your Brand',
     industry: basicInfo.industry || 'General',
     createdAt: new Date().toISOString(),
     lastModified: new Date().toISOString(),
-    mission: generatedAssets.mission || '',
-    values: generatedAssets.values || [],
+    mission: generatedAssets.brandIdentity?.mission || '',
+    values: generatedAssets.brandIdentity?.values || [],
+    tagline: generatedAssets.tagline || '',
     assets: {
       logos: [
         {
           id: 'primary-logo',
           name: 'Primary Logo',
           type: 'image',
-          url: generatedAssets.logoUrl || 'https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=400&h=400&fit=crop',
+          url: generatedAssets.logoUrl || null,
           variations: ['modern', 'minimal']
         }
       ],
       colors: {
-        primary: generatedAssets.colors?.[0] || '#1E40AF',
-        secondary: generatedAssets.colors?.[1] || '#7C3AED',
-        accent: generatedAssets.colors?.[2] || '#F59E0B',
+        primary: visualPreferences.colorPalette?.[0] || '#1E40AF',
+        secondary: visualPreferences.colorPalette?.[1] || '#7C3AED',
+        accent: visualPreferences.colorPalette?.[2] || '#F59E0B',
         neutral: '#6B7280',
-        palette: (generatedAssets.colors || []).map((hex, i) => ({
+        palette: (visualPreferences.colorPalette || []).map((hex, i) => ({
           name: `Color ${i + 1}`,
           hex,
           rgb: hex, // Simple hex to rgb placeholder
@@ -81,7 +93,7 @@ const BrandKitPreviewEditor = () => {
         }
       }
     }
-  };
+  }), [brandBrief, brandIdFromState, visualPreferences, basicInfo, generatedAssets]);
 
   const tabItems = [
     { id: 'logo', label: 'Logo', icon: 'Zap', count: brandData.assets.logos.length },
@@ -116,10 +128,19 @@ const BrandKitPreviewEditor = () => {
     setCanvasBackground(bgId);
   };
 
-  const handleSave = () => {
-    setHasUnsavedChanges(false);
-    // Mock save operation
-    console.log('Saving brand kit changes...');
+  const handleSave = async () => {
+    setIsSaveLoading(true);
+    try {
+      await saveToFirestore(brandBrief);
+      setLastSaved(new Date());
+      setHasUnsavedChanges(false);
+      toast.success('Brand kit saved successfully');
+    } catch (error) {
+      console.error('Error saving brand kit:', error);
+      toast.error('Failed to save brand kit');
+    } finally {
+      setIsSaveLoading(false);
+    }
   };
 
   const handleExport = () => {

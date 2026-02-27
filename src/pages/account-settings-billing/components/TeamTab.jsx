@@ -1,57 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
+import { useAuth } from 'context/AuthContext';
 import Icon from 'components/AppIcon';
 import Image from 'components/AppImage';
 
 const TeamTab = ({ userTier }) => {
+  const { currentUser } = useAuth();
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [inviteEmail, setInviteEmail] = useState('');
   const [inviteRole, setInviteRole] = useState('member');
 
-  const teamMembers = [
-    {
-      id: 1,
-      name: 'Sarah Johnson',
-      email: 'sarah.johnson@example.com',
+  const teamMembers = useMemo(() => {
+    if (!currentUser) return [];
+    return [{
+      id: currentUser.uid,
+      name: currentUser.displayName || 'You',
+      email: currentUser.email,
       role: 'owner',
-      avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face',
-      joinedDate: '2023-01-15',
-      lastActive: '2024-02-20',
+      avatar: currentUser.photoURL || 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=150&h=150&fit=crop&crop=face',
+      joinedDate: new Date().toISOString(),
+      lastActive: new Date().toISOString(),
       status: 'active',
-      creditsUsed: 15
-    },
-    {
-      id: 2,
-      name: 'Michael Chen',
-      email: 'michael.chen@example.com',
-      role: 'admin',
-      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
-      joinedDate: '2023-03-22',
-      lastActive: '2024-02-19',
-      status: 'active',
-      creditsUsed: 8
-    },
-    {
-      id: 3,
-      name: 'Emily Rodriguez',
-      email: 'emily.rodriguez@example.com',
-      role: 'member',
-      avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
-      joinedDate: '2023-06-10',
-      lastActive: '2024-02-18',
-      status: 'active',
-      creditsUsed: 12
-    }
-  ];
+      creditsUsed: 0
+    }];
+  }, [currentUser]);
 
-  const pendingInvites = [
-    {
-      id: 1,
-      email: 'john.doe@example.com',
-      role: 'member',
-      invitedDate: '2024-02-15',
-      invitedBy: 'Sarah Johnson'
-    }
-  ];
+  const pendingInvites = [];
 
   const roles = [
     {
@@ -122,13 +95,13 @@ const TeamTab = ({ userTier }) => {
               {currentMembers} of {maxMembers === 999 ? 'unlimited' : maxMembers} members
             </p>
           </div>
-          
+
           <div className="flex items-center space-x-4">
             <div className="text-center">
               <div className="text-2xl font-bold text-secondary">{teamMembers.reduce((sum, member) => sum + member.creditsUsed, 0)}</div>
               <div className="text-sm text-text-secondary">Credits Used</div>
             </div>
-            
+
             {currentMembers < maxMembers && (
               <button
                 onClick={() => setShowInviteModal(true)}
@@ -143,7 +116,7 @@ const TeamTab = ({ userTier }) => {
 
         {maxMembers !== 999 && (
           <div className="w-full bg-gray-200 rounded-full h-2">
-            <div 
+            <div
               className="bg-secondary h-2 rounded-full transition-all duration-300"
               style={{ width: `${(currentMembers / maxMembers) * 100}%` }}
             ></div>
@@ -154,7 +127,7 @@ const TeamTab = ({ userTier }) => {
       {/* Team Members */}
       <div className="bg-surface border border-border rounded-lg p-6">
         <h3 className="text-lg font-semibold text-text-primary mb-6">Team Members</h3>
-        
+
         <div className="space-y-4">
           {teamMembers.map((member) => (
             <div key={member.id} className="border border-border rounded-lg p-4">
@@ -167,7 +140,7 @@ const TeamTab = ({ userTier }) => {
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  
+
                   <div>
                     <div className="flex items-center space-x-2">
                       <h4 className="font-medium text-text-primary">{member.name}</h4>
@@ -209,7 +182,7 @@ const TeamTab = ({ userTier }) => {
       {pendingInvites.length > 0 && (
         <div className="bg-surface border border-border rounded-lg p-6">
           <h3 className="text-lg font-semibold text-text-primary mb-6">Pending Invites</h3>
-          
+
           <div className="space-y-4">
             {pendingInvites.map((invite) => (
               <div key={invite.id} className="border border-warning-200 bg-warning-50 rounded-lg p-4">
@@ -245,7 +218,7 @@ const TeamTab = ({ userTier }) => {
       {/* Role Permissions */}
       <div className="bg-surface border border-border rounded-lg p-6">
         <h3 className="text-lg font-semibold text-text-primary mb-6">Role Permissions</h3>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {roles.map((role) => (
             <div key={role.id} className="border border-border rounded-lg p-4">
@@ -257,7 +230,7 @@ const TeamTab = ({ userTier }) => {
                 </div>
                 <p className="text-sm text-text-secondary">{role.description}</p>
               </div>
-              
+
               <div className="space-y-2">
                 {role.permissions.map((permission, index) => (
                   <div key={index} className="flex items-center space-x-2">

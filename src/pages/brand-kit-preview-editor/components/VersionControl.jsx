@@ -5,54 +5,8 @@ const VersionControl = ({ brandId, onClose, onRestore }) => {
   const [selectedVersion, setSelectedVersion] = useState(null);
   const [showComparison, setShowComparison] = useState(false);
 
-  // Mock version history data
-  const versions = [
-    {
-      id: 'v1.0.0',
-      name: 'Initial Brand Kit',
-      timestamp: '2024-01-15T10:30:00Z',
-      author: 'Sarah Johnson',
-      changes: ['Created primary logo', 'Defined color palette', 'Set typography system'],
-      isCurrent: true,
-      size: '2.4 MB'
-    },
-    {
-      id: 'v0.9.0',
-      name: 'Logo Refinements',
-      timestamp: '2024-01-14T16:45:00Z',
-      author: 'Mike Chen',
-      changes: ['Adjusted logo proportions', 'Updated icon variations', 'Fixed color values'],
-      isCurrent: false,
-      size: '2.1 MB'
-    },
-    {
-      id: 'v0.8.0',
-      name: 'Color Palette Update',
-      timestamp: '2024-01-12T14:20:00Z',
-      author: 'Sarah Johnson',
-      changes: ['Added secondary colors', 'Updated accessibility compliance', 'Refined color usage guidelines'],
-      isCurrent: false,
-      size: '1.9 MB'
-    },
-    {
-      id: 'v0.7.0',
-      name: 'Typography System',
-      timestamp: '2024-01-10T11:15:00Z',
-      author: 'Alex Rivera',
-      changes: ['Defined font hierarchy', 'Added web font integration', 'Created typography guidelines'],
-      isCurrent: false,
-      size: '1.7 MB'
-    },
-    {
-      id: 'v0.6.0',
-      name: 'Initial Draft',
-      timestamp: '2024-01-08T09:00:00Z',
-      author: 'Sarah Johnson',
-      changes: ['Created basic logo concept', 'Initial color exploration', 'Basic brand structure'],
-      isCurrent: false,
-      size: '1.2 MB'
-    }
-  ];
+  // Mock version history data removed for production readiness
+  const versions = [];
 
   const formatDate = (timestamp) => {
     return new Date(timestamp).toLocaleDateString('en-US', {
@@ -100,7 +54,7 @@ const VersionControl = ({ brandId, onClose, onRestore }) => {
               Track and manage brand kit versions
             </p>
           </div>
-          
+
           <div className="flex items-center space-x-3">
             {selectedVersion && !selectedVersion.isCurrent && (
               <>
@@ -111,7 +65,7 @@ const VersionControl = ({ brandId, onClose, onRestore }) => {
                   <Icon name="GitCompare" size={16} />
                   <span>Compare</span>
                 </button>
-                
+
                 <button
                   onClick={() => handleRestore(selectedVersion.id)}
                   className="flex items-center space-x-2 px-4 py-2 text-sm font-medium bg-primary text-white rounded-md hover:bg-primary-600 transition-colors duration-200"
@@ -121,7 +75,7 @@ const VersionControl = ({ brandId, onClose, onRestore }) => {
                 </button>
               </>
             )}
-            
+
             <button
               onClick={onClose}
               className="p-2 rounded-md text-text-secondary hover:text-primary hover:bg-gray-100 transition-colors duration-200"
@@ -134,17 +88,26 @@ const VersionControl = ({ brandId, onClose, onRestore }) => {
         {/* Version List */}
         <div className="flex-1 overflow-y-auto p-6">
           <div className="space-y-4">
-            {versions.map((version) => {
+            {versions.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-20 text-center">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                  <Icon name="History" size={32} className="text-text-muted" />
+                </div>
+                <h3 className="text-lg font-medium text-text-primary mb-2">No version history yet</h3>
+                <p className="text-text-secondary max-w-sm">
+                  Once you start making changes to your brand kit, you'll be able to track and restore previous versions here.
+                </p>
+              </div>
+            ) : versions.map((version) => {
               const status = getVersionStatus(version);
               const isSelected = selectedVersion?.id === version.id;
-              
+
               return (
                 <div
                   key={version.id}
-                  className={`border rounded-lg p-4 cursor-pointer transition-all duration-200 ${
-                    isSelected
-                      ? 'border-primary bg-primary-50' :'border-border hover:border-gray-300 hover:bg-gray-50'
-                  }`}
+                  className={`border rounded-lg p-4 cursor-pointer transition-all duration-200 ${isSelected
+                    ? 'border-primary bg-primary-50' : 'border-border hover:border-gray-300 hover:bg-gray-50'
+                    }`}
                   onClick={() => handleVersionSelect(version)}
                 >
                   <div className="flex items-start justify-between">
@@ -160,7 +123,7 @@ const VersionControl = ({ brandId, onClose, onRestore }) => {
                           {version.id}
                         </span>
                       </div>
-                      
+
                       <div className="flex items-center space-x-4 text-sm text-text-secondary mb-3">
                         <div className="flex items-center space-x-1">
                           <Icon name="User" size={14} />
@@ -175,7 +138,7 @@ const VersionControl = ({ brandId, onClose, onRestore }) => {
                           <span>{version.size}</span>
                         </div>
                       </div>
-                      
+
                       <div className="space-y-1">
                         <h4 className="text-sm font-medium text-text-primary">Changes:</h4>
                         <ul className="text-sm text-text-secondary space-y-1">
@@ -188,7 +151,7 @@ const VersionControl = ({ brandId, onClose, onRestore }) => {
                         </ul>
                       </div>
                     </div>
-                    
+
                     <div className="flex items-center space-x-2 ml-4">
                       <button
                         onClick={(e) => {
@@ -200,7 +163,7 @@ const VersionControl = ({ brandId, onClose, onRestore }) => {
                       >
                         <Icon name="Download" size={16} />
                       </button>
-                      
+
                       {!version.isCurrent && (
                         <button
                           onClick={(e) => {
@@ -227,7 +190,7 @@ const VersionControl = ({ brandId, onClose, onRestore }) => {
             <div className="text-sm text-text-secondary">
               {versions.length} versions • Total size: 12.3 MB
             </div>
-            
+
             <div className="flex items-center space-x-3">
               <button
                 onClick={() => console.log('Creating new version...')}
@@ -236,7 +199,7 @@ const VersionControl = ({ brandId, onClose, onRestore }) => {
                 <Icon name="Plus" size={16} />
                 <span>Create Version</span>
               </button>
-              
+
               <button
                 onClick={onClose}
                 className="px-4 py-2 text-sm font-medium text-text-secondary border border-border rounded-md hover:bg-gray-50 transition-colors duration-200"
@@ -263,7 +226,7 @@ const VersionControl = ({ brandId, onClose, onRestore }) => {
                 <Icon name="X" size={20} />
               </button>
             </div>
-            
+
             <div className="flex-1 p-6">
               <div className="grid grid-cols-2 gap-6 h-full">
                 <div>
@@ -274,7 +237,7 @@ const VersionControl = ({ brandId, onClose, onRestore }) => {
                     <span className="text-text-muted">Current brand kit preview</span>
                   </div>
                 </div>
-                
+
                 <div>
                   <h4 className="text-sm font-medium text-text-primary mb-4">
                     {selectedVersion.name} ({selectedVersion.id})

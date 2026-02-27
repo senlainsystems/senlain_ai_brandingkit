@@ -6,113 +6,10 @@ const CollaborationPanel = ({ brandId, onClose }) => {
   const [newComment, setNewComment] = useState('');
   const [selectedElement, setSelectedElement] = useState(null);
 
-  // Mock collaboration data
-  const comments = [
-    {
-      id: 1,
-      author: 'Sarah Johnson',
-      avatar: 'https://randomuser.me/api/portraits/women/1.jpg',
-      timestamp: '2024-01-20T14:30:00Z',
-      element: 'Primary Logo',
-      content: 'The logo looks great! Could we try a slightly bolder version for better visibility at small sizes?',
-      status: 'open',
-      replies: [
-        {
-          id: 11,
-          author: 'Mike Chen',
-          avatar: 'https://randomuser.me/api/portraits/men/2.jpg',
-          timestamp: '2024-01-20T15:15:00Z',
-          content: 'Good point! I\'ll create a bold variant and update the minimum size guidelines.'
-        }
-      ]
-    },
-    {
-      id: 2,
-      author: 'Alex Rivera',
-      avatar: 'https://randomuser.me/api/portraits/men/3.jpg',
-      timestamp: '2024-01-20T11:45:00Z',
-      element: 'Color Palette',
-      content: 'The accessibility contrast ratios look perfect. All colors meet WCAG AA standards.',
-      status: 'resolved',
-      replies: []
-    },
-    {
-      id: 3,
-      author: 'Emily Davis',
-      avatar: 'https://randomuser.me/api/portraits/women/4.jpg',
-      timestamp: '2024-01-19T16:20:00Z',
-      element: 'Typography',
-      content: 'Should we consider adding a third font for special use cases like quotes or callouts?',
-      status: 'open',
-      replies: []
-    }
-  ];
-
-  const teamMembers = [
-    {
-      id: 1,
-      name: 'Sarah Johnson',
-      email: 'sarah@company.com',
-      role: 'Brand Manager',
-      avatar: 'https://randomuser.me/api/portraits/women/1.jpg',
-      status: 'online',
-      permissions: 'admin'
-    },
-    {
-      id: 2,
-      name: 'Mike Chen',
-      email: 'mike@company.com',
-      role: 'Senior Designer',
-      avatar: 'https://randomuser.me/api/portraits/men/2.jpg',
-      status: 'online',
-      permissions: 'editor'
-    },
-    {
-      id: 3,
-      name: 'Alex Rivera',
-      email: 'alex@company.com',
-      role: 'UX Designer',
-      avatar: 'https://randomuser.me/api/portraits/men/3.jpg',
-      status: 'away',
-      permissions: 'editor'
-    },
-    {
-      id: 4,
-      name: 'Emily Davis',
-      email: 'emily@company.com',
-      role: 'Marketing Lead',
-      avatar: 'https://randomuser.me/api/portraits/women/4.jpg',
-      status: 'offline',
-      permissions: 'viewer'
-    }
-  ];
-
-  const approvals = [
-    {
-      id: 1,
-      element: 'Primary Logo',
-      status: 'approved',
-      approver: 'Sarah Johnson',
-      timestamp: '2024-01-20T16:00:00Z',
-      comments: 'Approved for production use'
-    },
-    {
-      id: 2,
-      element: 'Color Palette',
-      status: 'pending',
-      approver: 'Marketing Team',
-      timestamp: null,
-      comments: 'Waiting for final review'
-    },
-    {
-      id: 3,
-      element: 'Typography System',
-      status: 'changes_requested',
-      approver: 'Alex Rivera',
-      timestamp: '2024-01-19T14:30:00Z',
-      comments: 'Please add more font weight options'
-    }
-  ];
+  // Collaboration data removed for production readiness
+  const comments = [];
+  const teamMembers = [];
+  const approvals = [];
 
   const formatDate = (timestamp) => {
     return new Date(timestamp).toLocaleDateString('en-US', {
@@ -139,12 +36,12 @@ const CollaborationPanel = ({ brandId, onClose }) => {
 
   const handleAddComment = () => {
     if (!newComment.trim()) return;
-    
+
     console.log('Adding comment:', {
       content: newComment,
       element: selectedElement
     });
-    
+
     setNewComment('');
     setSelectedElement(null);
   };
@@ -161,7 +58,7 @@ const CollaborationPanel = ({ brandId, onClose }) => {
           <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
             <Icon name="User" size={16} color="white" />
           </div>
-          
+
           <div className="flex-1 space-y-3">
             <div>
               <select
@@ -176,7 +73,7 @@ const CollaborationPanel = ({ brandId, onClose }) => {
                 <option value="Guidelines">Guidelines</option>
               </select>
             </div>
-            
+
             <textarea
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
@@ -184,13 +81,13 @@ const CollaborationPanel = ({ brandId, onClose }) => {
               rows={3}
               className="w-full px-3 py-2 border border-border rounded-md text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 resize-none"
             />
-            
+
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2 text-xs text-text-muted">
                 <Icon name="AtSign" size={12} />
                 <span>Use @name to mention team members</span>
               </div>
-              
+
               <button
                 onClick={handleAddComment}
                 disabled={!newComment.trim() || !selectedElement}
@@ -205,7 +102,17 @@ const CollaborationPanel = ({ brandId, onClose }) => {
 
       {/* Comments List */}
       <div className="space-y-4">
-        {comments.map((comment) => (
+        {comments.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-12 text-center">
+            <div className="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center mb-3">
+              <Icon name="MessageSquare" size={24} className="text-text-muted" />
+            </div>
+            <h4 className="text-sm font-medium text-text-primary mb-1">No comments yet</h4>
+            <p className="text-xs text-text-secondary max-w-[200px]">
+              Be the first to leave feedback on this brand kit.
+            </p>
+          </div>
+        ) : comments.map((comment) => (
           <div key={comment.id} className="bg-surface border border-border rounded-lg p-4">
             <div className="flex items-start space-x-3">
               <img
@@ -213,7 +120,7 @@ const CollaborationPanel = ({ brandId, onClose }) => {
                 alt={comment.author}
                 className="w-8 h-8 rounded-full"
               />
-              
+
               <div className="flex-1">
                 <div className="flex items-center space-x-2 mb-2">
                   <span className="text-sm font-medium text-text-primary">
@@ -230,11 +137,11 @@ const CollaborationPanel = ({ brandId, onClose }) => {
                     {comment.status}
                   </span>
                 </div>
-                
+
                 <p className="text-sm text-text-secondary mb-3">
                   {comment.content}
                 </p>
-                
+
                 {comment.replies.length > 0 && (
                   <div className="space-y-3 pl-4 border-l-2 border-gray-200">
                     {comment.replies.map((reply) => (
@@ -261,7 +168,7 @@ const CollaborationPanel = ({ brandId, onClose }) => {
                     ))}
                   </div>
                 )}
-                
+
                 <div className="flex items-center space-x-4 mt-3 text-xs">
                   <button className="text-text-muted hover:text-primary transition-colors duration-200">
                     Reply
@@ -287,7 +194,7 @@ const CollaborationPanel = ({ brandId, onClose }) => {
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-sm font-medium text-text-primary">Invite Team Member</h3>
         </div>
-        
+
         <div className="flex space-x-2">
           <input
             type="email"
@@ -310,7 +217,17 @@ const CollaborationPanel = ({ brandId, onClose }) => {
 
       {/* Team Members */}
       <div className="space-y-3">
-        {teamMembers.map((member) => (
+        {teamMembers.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-12 text-center">
+            <div className="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center mb-3">
+              <Icon name="Users" size={24} className="text-text-muted" />
+            </div>
+            <h4 className="text-sm font-medium text-text-primary mb-1">No team members</h4>
+            <p className="text-xs text-text-secondary max-w-[200px]">
+              Invite your team to collaborate on this brand identity.
+            </p>
+          </div>
+        ) : teamMembers.map((member) => (
           <div key={member.id} className="flex items-center justify-between p-3 bg-surface border border-border rounded-lg">
             <div className="flex items-center space-x-3">
               <div className="relative">
@@ -321,7 +238,7 @@ const CollaborationPanel = ({ brandId, onClose }) => {
                 />
                 <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-white ${getStatusColor(member.status)}`}></div>
               </div>
-              
+
               <div>
                 <div className="flex items-center space-x-2">
                   <span className="text-sm font-medium text-text-primary">
@@ -338,15 +255,14 @@ const CollaborationPanel = ({ brandId, onClose }) => {
                 </div>
               </div>
             </div>
-            
+
             <div className="flex items-center space-x-2">
-              <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                member.permissions === 'admin' ? 'bg-secondary-100 text-secondary-700' :
-                member.permissions === 'editor'? 'bg-primary-100 text-primary-700' : 'bg-gray-100 text-gray-700'
-              }`}>
+              <span className={`px-2 py-1 rounded-full text-xs font-medium ${member.permissions === 'admin' ? 'bg-secondary-100 text-secondary-700' :
+                member.permissions === 'editor' ? 'bg-primary-100 text-primary-700' : 'bg-gray-100 text-gray-700'
+                }`}>
                 {member.permissions}
               </span>
-              
+
               <button className="p-1 rounded text-text-muted hover:text-primary transition-colors duration-200">
                 <Icon name="MoreVertical" size={16} />
               </button>
@@ -359,7 +275,17 @@ const CollaborationPanel = ({ brandId, onClose }) => {
 
   const renderApprovalsTab = () => (
     <div className="space-y-4">
-      {approvals.map((approval) => (
+      {approvals.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-12 text-center">
+          <div className="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center mb-3">
+            <Icon name="CheckCircle" size={24} className="text-text-muted" />
+          </div>
+          <h4 className="text-sm font-medium text-text-primary mb-1">No approvals requested</h4>
+          <p className="text-xs text-text-secondary max-w-[200px]">
+            Once assets are ready, request approval from stakeholders here.
+          </p>
+        </div>
+      ) : approvals.map((approval) => (
         <div key={approval.id} className="bg-surface border border-border rounded-lg p-4">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center space-x-3">
@@ -370,7 +296,7 @@ const CollaborationPanel = ({ brandId, onClose }) => {
                 {approval.status.replace('_', ' ')}
               </span>
             </div>
-            
+
             {approval.status === 'pending' && (
               <div className="flex space-x-2">
                 <button className="px-3 py-1 text-xs font-medium text-error hover:bg-error-50 rounded transition-colors duration-200">
@@ -382,17 +308,17 @@ const CollaborationPanel = ({ brandId, onClose }) => {
               </div>
             )}
           </div>
-          
+
           <div className="text-sm text-text-secondary mb-2">
             <span className="font-medium">Approver:</span> {approval.approver}
           </div>
-          
+
           {approval.timestamp && (
             <div className="text-sm text-text-secondary mb-2">
               <span className="font-medium">Date:</span> {formatDate(approval.timestamp)}
             </div>
           )}
-          
+
           {approval.comments && (
             <div className="text-sm text-text-secondary">
               <span className="font-medium">Comments:</span> {approval.comments}
@@ -420,7 +346,7 @@ const CollaborationPanel = ({ brandId, onClose }) => {
               Work together on brand assets
             </p>
           </div>
-          
+
           <button
             onClick={onClose}
             className="p-2 rounded-md text-text-secondary hover:text-primary hover:bg-gray-100 transition-colors duration-200"
@@ -436,10 +362,9 @@ const CollaborationPanel = ({ brandId, onClose }) => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex-1 flex items-center justify-center space-x-2 py-3 px-4 text-sm font-medium transition-colors duration-200 ${
-                  activeTab === tab.id
-                    ? 'text-primary border-b-2 border-primary bg-primary-50' :'text-text-secondary hover:text-primary hover:bg-gray-50'
-                }`}
+                className={`flex-1 flex items-center justify-center space-x-2 py-3 px-4 text-sm font-medium transition-colors duration-200 ${activeTab === tab.id
+                  ? 'text-primary border-b-2 border-primary bg-primary-50' : 'text-text-secondary hover:text-primary hover:bg-gray-50'
+                  }`}
               >
                 <Icon name={tab.icon} size={16} />
                 <span>{tab.label}</span>
